@@ -28,6 +28,121 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+    min-width: 320px;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        circle at 50% -10%,
+        hsl(var(--accent) / 0.07),
+        transparent 34%
+      ),
+      linear-gradient(
+        to bottom,
+        hsl(var(--background) / 0.78),
+        hsl(var(--background) / 0.93)
+      );
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.28);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer components {
+  .particle-cursor-glow {
+    width: min(44rem, 62vw);
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    will-change: transform;
+    background: radial-gradient(
+      circle,
+      hsl(var(--accent) / 0.13) 0%,
+      hsl(var(--accent) / 0.065) 28%,
+      transparent 70%
+    );
+    filter: blur(10px);
+    transition: opacity 300ms ease;
+  }
+
+  .skill-chip {
+    --skill-color: 96 165 250;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card) / 0.75);
+    padding: 0.65rem 1rem;
+    color: hsl(var(--muted-foreground));
+    transition:
+      transform 220ms ease,
+      border-color 220ms ease,
+      background-color 220ms ease,
+      color 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .skill-chip::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at center,
+      rgb(var(--skill-color) / 0.16),
+      transparent 68%
+    );
+    transition: opacity 220ms ease;
+  }
+
+  .skill-chip:hover {
+    transform: translateY(-2px) scale(1.035);
+    border-color: rgb(var(--skill-color) / 0.48);
+    background: rgb(var(--skill-color) / 0.075);
+    color: rgb(var(--skill-color));
+    box-shadow:
+      0 0 0 1px rgb(var(--skill-color) / 0.08),
+      0 0 28px -8px rgb(var(--skill-color) / 0.62);
+  }
+
+  .skill-chip:hover::before {
+    opacity: 1;
+  }
+
+  .skill-chip-icon {
+    position: relative;
+    z-index: 1;
+    color: rgb(var(--skill-color));
+    filter: grayscale(1);
+    opacity: 0.62;
+    transition:
+      filter 220ms ease,
+      opacity 220ms ease,
+      transform 220ms ease;
+  }
+
+  .skill-chip:hover .skill-chip-icon {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .skill-chip-label {
+    position: relative;
+    z-index: 1;
   }
 }
 
@@ -41,6 +156,12 @@
   }
 }
 
+@media (hover: none), (pointer: coarse) {
+  .particle-cursor-glow {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -49,5 +170,14 @@
   .animate-marquee,
   .animate-fade-in-up {
     animation: none !important;
+  }
+
+  .particle-cursor-glow {
+    display: none;
+  }
+
+  .skill-chip,
+  .skill-chip-icon {
+    transition: none;
   }
 }

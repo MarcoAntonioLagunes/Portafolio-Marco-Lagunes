@@ -4,6 +4,7 @@ import { BootProvider } from "@/lib/boot-context";
 import { BootIntro } from "@/components/BootIntro";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { ParticleBackground } from "@/components/ParticleBackground";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,7 +49,8 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "Marco Lagunes · Portafolio",
     title: SITE_TITLE,
-    description: "Construyendo software seguro y listo para producción, de principio a fin.",
+    description:
+      "Construyendo software seguro y listo para producción, de principio a fin.",
     images: [
       {
         url: "/images/og-image.png",
@@ -61,7 +63,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: SITE_TITLE,
-    description: "Ingeniero en Sistemas Computacionales · Full-Stack · Ciberseguridad Aplicada",
+    description:
+      "Ingeniero en Sistemas Computacionales · Full-Stack · Ciberseguridad Aplicada",
     images: ["/images/og-image.png"],
   },
   icons: {
@@ -88,12 +91,20 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="min-h-full bg-background text-foreground">
         <BootProvider>
-          <BootIntro />
-          <Navbar />
-          {children}
-          <Footer />
+          <ParticleBackground />
+
+          <div className="relative z-10 flex min-h-screen flex-col">
+            <BootIntro />
+            <Navbar />
+
+            <main className="relative flex-1">
+              {children}
+            </main>
+
+            <Footer />
+          </div>
         </BootProvider>
       </body>
     </html>
