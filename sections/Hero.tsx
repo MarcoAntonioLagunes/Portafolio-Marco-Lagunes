@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import Image from "next/image";
 import { heroStats, socialLinks } from "@/lib/data";
+import { ScrollCue } from "@/components/ScrollCue";
 import { SocialIcon } from "@/components/SocialIcon";
 import { StatCounter } from "@/components/StatCounter";
 import { TypewriterText } from "@/components/TypewriterText";
@@ -50,13 +51,13 @@ export function Hero() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4 md:justify-start">
             <a
               href="#proyectos"
-              className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-300 hover:scale-[1.04] hover:bg-accent/90 hover:shadow-[0_0_24px_-2px_hsl(var(--accent)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98]"
             >
               Ver proyectos
             </a>
             <a
               href="#contacto"
-              className="rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:scale-[1.04] hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98]"
             >
               Contactarme
             </a>
@@ -95,6 +96,8 @@ export function Hero() {
           )}
         </div>
       </div>
+
+      <ScrollCue className="absolute inset-x-0 bottom-40 hidden text-center md:block" />
 
       <div className="relative mt-12 mx-auto grid max-w-4xl grid-cols-2 gap-4 px-6 sm:grid-cols-4 md:absolute md:inset-x-0 md:bottom-10 md:mt-0">
         {heroStats.map((stat) => (

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "@/components/MobileMenu";
+import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { label: "Sobre mí", href: "#sobre-mi" },
@@ -21,10 +22,29 @@ export function Navbar() {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string>("sobre-mi");
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 50);
   });
+
+  useEffect(() => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main section[id]"));
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (visible.length > 0) {
+          setActiveId(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <motion.header
@@ -43,16 +63,31 @@ export function Navbar() {
         </a>
 
         <ul className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isActive = activeId === link.href.slice(1);
+            return (
+              <li key={link.href} className="relative py-2">
+                <a
+                  href={link.href}
+                  className={cn(
+                    "relative font-mono text-xs uppercase tracking-widest transition-colors",
+                    isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                    "after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-foreground after:transition-transform after:duration-300",
+                    !isActive && "hover:after:scale-x-100",
+                  )}
+                >
+                  {link.label}
+                </a>
+                {isActive && (
+                  <motion.span
+                    layoutId="navbar-active-indicator"
+                    className="absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-accent"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
+              </li>
+            );
+          })}
         </ul>
 
         <button
@@ -65,7 +100,12 @@ export function Navbar() {
         </button>
       </nav>
 
-      <MobileMenu open={menuOpen} links={NAV_LINKS} onClose={() => setMenuOpen(false)} />
+      <MobileMenu
+        open={menuOpen}
+        links={NAV_LINKS}
+        activeId={activeId}
+        onClose={() => setMenuOpen(false)}
+      />
     </motion.header>
   );
 }

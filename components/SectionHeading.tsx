@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { fadeInUpProps } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
 export function SectionHeading({
@@ -12,14 +13,9 @@ export function SectionHeading({
   title: string;
   className?: string;
 }) {
+  const reduced = useReducedMotion();
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={cn("mb-12", className)}
-    >
+    <motion.div {...fadeInUpProps(!!reduced)} className={cn("mb-12", className)}>
       <p className="font-mono text-xs uppercase tracking-widest text-accent">
         {`// ${eyebrow}`}
       </p>

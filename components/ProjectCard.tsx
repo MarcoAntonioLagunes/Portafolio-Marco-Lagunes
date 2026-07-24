@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import { fadeInUpProps } from "@/lib/animations";
 import type { ProjectItem } from "@/lib/types";
 
 export function ProjectCard({ project, index }: { project: ProjectItem; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [tiltEnabled, setTiltEnabled] = useState(false);
+  const reduced = useReducedMotion();
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -42,12 +44,11 @@ export function ProjectCard({ project, index }: { project: ProjectItem; index: n
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
+      {...fadeInUpProps(!!reduced, index * 0.1)}
+      whileHover={reduced ? undefined : { y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
+      whileTap={reduced ? undefined : { y: -2, transition: { duration: 0.15, ease: "easeOut" } }}
       style={{ rotateX, rotateY, transformPerspective: 800 }}
-      className="flex h-full flex-col justify-between rounded-2xl border border-border bg-card p-6"
+      className="flex h-full flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-lg shadow-black/0 transition-shadow duration-300 hover:shadow-2xl hover:shadow-black/40"
     >
       <div>
         <div className="flex items-start justify-between gap-3">

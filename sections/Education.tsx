@@ -1,10 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { GraduationCap } from "lucide-react";
+import { fadeInUpProps } from "@/lib/animations";
 import { education } from "@/lib/data";
 
 export function Education() {
+  const reduced = useReducedMotion();
   return (
     <section id="educacion" className="scroll-mt-24 py-12">
       <div className="mx-auto max-w-6xl px-6">
@@ -12,10 +14,7 @@ export function Education() {
           {education.map((item) => (
             <motion.div
               key={item.degree}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+              {...fadeInUpProps(!!reduced)}
               className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5"
             >
               <GraduationCap className="h-6 w-6 shrink-0 text-accent" />

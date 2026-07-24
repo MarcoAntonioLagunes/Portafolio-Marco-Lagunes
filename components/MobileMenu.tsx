@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface NavLink {
   label: string;
@@ -11,10 +12,12 @@ interface NavLink {
 export function MobileMenu({
   open,
   links,
+  activeId,
   onClose,
 }: {
   open: boolean;
   links: NavLink[];
+  activeId?: string;
   onClose: () => void;
 }) {
   return (
@@ -46,16 +49,24 @@ export function MobileMenu({
             >
               <X className="h-5 w-5" />
             </button>
-            {links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={onClose}
-                className="rounded-md px-3 py-3 font-mono text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                {link.label}
-              </a>
-            ))}
+            {links.map((link) => {
+              const isActive = activeId === link.href.slice(1);
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={onClose}
+                  className={cn(
+                    "relative w-fit rounded-md px-3 py-3 font-mono text-sm transition-colors hover:bg-muted hover:text-foreground",
+                    isActive ? "text-foreground" : "text-muted-foreground",
+                    "after:absolute after:bottom-2 after:left-3 after:h-px after:w-[calc(100%-1.5rem)] after:origin-left after:scale-x-0 after:bg-accent after:transition-transform after:duration-300",
+                    isActive ? "after:scale-x-100" : "hover:after:scale-x-100",
+                  )}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </motion.div>
         </>
       )}

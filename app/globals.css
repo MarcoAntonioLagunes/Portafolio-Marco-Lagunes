@@ -45,4 +45,9 @@
   html {
     scroll-behavior: auto;
   }
+
+  .animate-marquee,
+  .animate-fade-in-up {
+    animation: none !important;
+  }
 }

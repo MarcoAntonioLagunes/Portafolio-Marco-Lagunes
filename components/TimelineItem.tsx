@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { fadeInUpProps } from "@/lib/animations";
 import type { ExperienceItem } from "@/lib/types";
 
 export function TimelineItem({
@@ -12,12 +13,10 @@ export function TimelineItem({
   index: number;
   isLast?: boolean;
 }) {
+  const reduced = useReducedMotion();
   return (
     <motion.li
-      initial={{ opacity: 0, x: -24 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.08 }}
+      {...fadeInUpProps(!!reduced, index * 0.08)}
       className="relative pb-10 pl-10 last:pb-0"
     >
       <span className="absolute left-0 top-1.5 h-3 w-3 rounded-full border-2 border-accent bg-background" />

@@ -1,11 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Award } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
+import { fadeInUpProps } from "@/lib/animations";
 import { certifications } from "@/lib/data";
 
 export function Certifications() {
+  const reduced = useReducedMotion();
   return (
     <section id="certificaciones" className="scroll-mt-24 border-t border-border py-24">
       <div className="mx-auto max-w-6xl px-6">
@@ -15,10 +17,7 @@ export function Certifications() {
           {certifications.map((cert, index) => (
             <motion.div
               key={cert.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.06 }}
+              {...fadeInUpProps(!!reduced, index * 0.06)}
               className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5"
             >
               <div className="flex items-start justify-between gap-3">

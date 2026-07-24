@@ -1,8 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Code2, Server, ShieldCheck, Wrench } from "lucide-react";
+import { Marquee } from "@/components/Marquee";
 import { SectionHeading } from "@/components/SectionHeading";
+import { fadeInUpItemVariants, staggerContainerProps } from "@/lib/animations";
 import { skills } from "@/lib/data";
 import type { SkillCategory } from "@/lib/types";
 
@@ -13,29 +15,19 @@ const ICONS = {
   wrench: Wrench,
 } satisfies Record<SkillCategory["icon"], typeof Code2>;
 
-const container = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
-};
-
 export function Skills() {
+  const reduced = useReducedMotion();
+  const allSkillNames = skills.flatMap((category) => category.skills);
+
   return (
     <section id="stack" className="scroll-mt-24 border-t border-border py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading eyebrow="stack" title="Stack técnico" />
 
+        <Marquee items={allSkillNames} className="mb-10" />
+
         <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={container}
+          {...staggerContainerProps(!!reduced)}
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
           {skills.map((category) => {
@@ -43,7 +35,7 @@ export function Skills() {
             return (
               <motion.div
                 key={category.category}
-                variants={item}
+                variants={fadeInUpItemVariants(!!reduced)}
                 className="rounded-2xl border border-border bg-card p-6"
               >
                 <Icon className="h-6 w-6 text-accent" />

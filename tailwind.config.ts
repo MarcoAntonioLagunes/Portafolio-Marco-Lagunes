@@ -38,13 +38,18 @@ const config: Config = {
       },
       keyframes: {
         "fade-in-up": {
-          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "0%": { opacity: "0", transform: "translateY(24px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
         },
       },
       animation: {
         "pulse-slow": "pulse 3s ease-in-out infinite",
         "fade-in-up": "fade-in-up 0.6s ease-out both",
+        marquee: "marquee 26s linear infinite",
       },
       backgroundImage: {
         "grid-glow":

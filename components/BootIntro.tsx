@@ -55,7 +55,12 @@ export function BootIntro() {
 
   useEffect(() => {
     if (!visible) return;
-    const handleKeyDown = () => finish();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevent default so keys with native scroll behavior (Space, arrows, Page Down)
+      // don't jump-scroll the page underneath while it's being dismissed.
+      e.preventDefault();
+      finish();
+    };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [visible]);
@@ -108,9 +113,9 @@ export function BootIntro() {
 
           <div className="h-[3px] w-40 overflow-hidden rounded-full bg-muted">
             <motion.div
-              className="h-full bg-accent"
-              initial={{ width: "0%" }}
-              animate={{ width: "100%" }}
+              className="h-full w-full origin-left bg-accent"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
               transition={
                 reducedMotion
                   ? { duration: 0 }

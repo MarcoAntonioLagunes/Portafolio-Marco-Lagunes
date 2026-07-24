@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Download, Mail, MessageCircle, Phone } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SocialIcon } from "@/components/SocialIcon";
+import { fadeInUpProps } from "@/lib/animations";
 import { socialLinks } from "@/lib/data";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export function Contact() {
+  const reduced = useReducedMotion();
   const [status, setStatus] = useState<Status>("idle");
   const emailLink = socialLinks.find((link) => link.icon === "mail");
   const phoneLink = socialLinks.find((link) => link.icon === "phone");
@@ -50,10 +52,7 @@ export function Contact() {
 
         <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:gap-12">
           <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            {...fadeInUpProps(!!reduced)}
             onSubmit={handleSubmit}
             className="flex flex-col gap-4"
           >
@@ -99,7 +98,7 @@ export function Contact() {
             <button
               type="submit"
               disabled={status === "loading"}
-              className="mt-2 w-fit rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
+              className="mt-2 w-fit rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-300 hover:scale-[1.04] hover:bg-accent/90 hover:shadow-[0_0_24px_-2px_hsl(var(--accent)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:opacity-60 disabled:hover:scale-100"
             >
               {status === "loading" ? "Enviando..." : "Enviar mensaje"}
             </button>
@@ -114,13 +113,7 @@ export function Contact() {
             )}
           </motion.form>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-            className="flex flex-col gap-3 lg:w-64"
-          >
+          <motion.div {...fadeInUpProps(!!reduced, 0.1)} className="flex flex-col gap-3 lg:w-64">
             {emailLink && (
               <a
                 href={emailLink.href}
