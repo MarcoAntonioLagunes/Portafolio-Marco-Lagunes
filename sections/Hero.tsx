@@ -16,12 +16,12 @@ export function Hero() {
   return (
     <section
       id="sobre-mi"
-      className="relative flex min-h-screen items-center overflow-hidden pt-24"
+      className="relative flex flex-col items-center overflow-hidden pb-12 pt-24 md:flex-row md:min-h-screen md:pb-24"
     >
       <div className="pointer-events-none absolute inset-0 bg-grid-glow" />
 
       <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-[1fr_auto] md:items-center">
-        <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <div className="flex animate-fade-in-up flex-col items-center text-center md:items-start md:text-left">
           <p className="font-mono text-xs uppercase tracking-widest text-accent">
             Desarrollador Full-Stack
           </p>
@@ -70,7 +70,7 @@ export function Hero() {
                 aria-label={link.label}
                 target={link.href.startsWith("http") ? "_blank" : undefined}
                 rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="text-muted-foreground transition-colors hover:text-accent"
+                className="rounded-sm text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <SocialIcon icon={link.icon} className="h-5 w-5" />
               </a>
@@ -96,7 +96,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-10 mx-auto grid max-w-4xl grid-cols-2 gap-4 px-6 sm:grid-cols-4">
+      <div className="relative mt-12 mx-auto grid max-w-4xl grid-cols-2 gap-4 px-6 sm:grid-cols-4 md:absolute md:inset-x-0 md:bottom-10 md:mt-0">
         {heroStats.map((stat) => (
           <StatCounter key={stat.label} value={stat.value} label={stat.label} />
         ))}

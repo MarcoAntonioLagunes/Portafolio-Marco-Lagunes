@@ -124,7 +124,7 @@ export function Contact() {
             {emailLink && (
               <a
                 href={emailLink.href}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors hover:border-accent"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <Mail className="h-4 w-4 text-accent" /> Email
               </a>
@@ -132,7 +132,7 @@ export function Contact() {
             {phoneLink && (
               <a
                 href={phoneLink.href}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors hover:border-accent"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <Phone className="h-4 w-4 text-accent" /> Llamar
               </a>
@@ -142,7 +142,7 @@ export function Contact() {
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors hover:border-accent"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <MessageCircle className="h-4 w-4 text-accent" /> WhatsApp
               </a>
@@ -152,7 +152,7 @@ export function Contact() {
                 href={linkedinLink.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors hover:border-accent"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <SocialIcon icon="linkedin" className="h-4 w-4 text-accent" /> LinkedIn
               </a>
@@ -161,7 +161,7 @@ export function Contact() {
             <a
               href="/cv-marco-lagunes.pdf"
               download
-              className="flex items-center gap-3 rounded-xl border border-border bg-muted px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-accent"
+              className="flex items-center gap-3 rounded-xl border border-border bg-muted px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <Download className="h-4 w-4 text-accent" /> Descargar CV
             </a>

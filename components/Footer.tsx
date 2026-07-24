@@ -18,7 +18,7 @@ export function Footer() {
               aria-label={link.label}
               target={link.href.startsWith("http") ? "_blank" : undefined}
               rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="transition-colors hover:text-foreground"
+              className="rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <SocialIcon icon={link.icon} className="h-4 w-4" />
             </a>

@@ -20,8 +20,9 @@ export function BootIntro() {
   const finishedRef = useRef(false);
 
   useEffect(() => {
+    const forceReplay = new URLSearchParams(window.location.search).get("boot") === "1";
     const seen = sessionStorage.getItem(SESSION_KEY);
-    if (!seen) {
+    if (forceReplay || !seen) {
       sessionStorage.setItem(SESSION_KEY, "1");
       setMuted(localStorage.getItem(MUTE_KEY) === "1");
       setVisible(true);
