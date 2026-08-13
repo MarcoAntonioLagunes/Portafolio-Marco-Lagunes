@@ -18,7 +18,8 @@ export function Certifications() {
             <motion.div
               key={cert.name}
               {...fadeInUpProps(!!reduced, index * 0.06)}
-              className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5"
+              whileHover={reduced ? undefined : { y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
+              className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 transition-[border-color,box-shadow] duration-300 hover:border-accent/40 hover:shadow-[0_0_28px_-12px_hsl(var(--accent)/0.5)]"
             >
               <div className="flex items-start justify-between gap-3">
                 <Award className="h-5 w-5 shrink-0 text-accent" />

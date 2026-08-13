@@ -114,6 +114,7 @@ export const projects: ProjectItem[] = [
     description:
       "Plataforma full-stack construida para una asociación nacional de oficiales de marina mercante, para digitalizar su proceso de evaluación de CVs, con autenticación JWT, control de acceso por roles y backend con REST API.",
     stack: ["React", "Node.js", "MongoDB", "JWT", "REST API"],
+    status: "En producción",
   },
   {
     title: "Plataforma Web Full-Stack con Autenticación",
@@ -123,6 +124,7 @@ export const projects: ProjectItem[] = [
       "Aplicación cliente-servidor con autenticación JWT, REST APIs y base de datos MongoDB. Desplegada en la nube con seguridad integrada de principio a fin, accesible desde web y móvil.",
     stack: ["React", "Node.js", "MongoDB", "JWT", "Cloud"],
     href: "https://ultranube.com.mx",
+    status: "Proyecto personal",
   },
   {
     title: "Arquitectura IoT: Redes y Sensores",
@@ -131,6 +133,7 @@ export const projects: ProjectItem[] = [
     description:
       "Red distribuida de dispositivos IoT con gestión de sensores y controles de ciberseguridad aplicados en un entorno de hardware distribuido.",
     stack: ["IoT", "Redes", "Ciberseguridad", "Cisco"],
+    status: "Académico",
   },
 ];
 

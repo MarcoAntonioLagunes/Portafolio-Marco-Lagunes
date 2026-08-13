@@ -24,6 +24,7 @@ export interface ProjectItem {
   description: string;
   stack: string[];
   href?: string;
+  status?: "En producción" | "Proyecto personal" | "Académico";
 }
 
 export interface CertificationItem {

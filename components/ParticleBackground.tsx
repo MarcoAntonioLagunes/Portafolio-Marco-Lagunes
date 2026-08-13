@@ -10,7 +10,7 @@ type Particle = {
   radius: number;
 };
 
-const PARTICLE_COLOR = "96, 165, 250";
+const PARTICLE_COLOR = "124, 111, 224";
 const MAX_CONNECTION_DISTANCE = 125;
 
 export function ParticleBackground() {
@@ -79,8 +79,8 @@ export function ParticleBackground() {
         (): Particle => ({
           x: Math.random() * width,
           y: Math.random() * height,
-          velocityX: (Math.random() - 0.5) * 0.08,
-          velocityY: (Math.random() - 0.5) * 0.08,
+          velocityX: (Math.random() - 0.5) * 0.06,
+          velocityY: -(Math.random() * 0.09 + 0.02),
           radius: Math.random() * 1.1 + 0.45,
         })
       );

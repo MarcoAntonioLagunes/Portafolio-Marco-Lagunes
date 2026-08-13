@@ -30,11 +30,15 @@ const config: Config = {
           DEFAULT: "hsl(var(--accent) / <alpha-value>)",
           foreground: "hsl(var(--accent-foreground) / <alpha-value>)",
         },
+        surface2: "hsl(var(--surface-2) / <alpha-value>)",
+        surface3: "hsl(var(--surface-3) / <alpha-value>)",
+        lavender: "hsl(var(--lavender) / <alpha-value>)",
+        mint: "hsl(var(--mint) / <alpha-value>)",
         ring: "hsl(var(--ring) / <alpha-value>)",
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       keyframes: {
         "fade-in-up": {
@@ -45,11 +49,19 @@ const config: Config = {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        blink: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0" },
+        },
       },
       animation: {
         "pulse-slow": "pulse 3s ease-in-out infinite",
         "fade-in-up": "fade-in-up 0.6s ease-out both",
         marquee: "marquee 26s linear infinite",
+        "float-y": "float-y 4s ease-in-out infinite",
+        "blob-drift": "blob-drift 16s ease-in-out infinite",
+        "blob-drift-slow": "blob-drift 22s ease-in-out infinite reverse",
+        blink: "blink 1s step-end infinite",
       },
       backgroundImage: {
         "grid-glow":

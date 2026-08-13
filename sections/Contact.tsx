@@ -46,7 +46,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contacto" className="scroll-mt-24 border-t border-border py-24">
+    <section id="contacto" className="scroll-mt-24 border-t border-border bg-surface3/50 py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading eyebrow="contacto" title="Hablemos" />
 

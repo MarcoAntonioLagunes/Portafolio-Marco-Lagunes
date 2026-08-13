@@ -1,10 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
-import Image from "next/image";
 import { heroStats, socialLinks } from "@/lib/data";
+import { HeroAvatar } from "@/components/HeroAvatar";
 import { ScrollCue } from "@/components/ScrollCue";
 import { SocialIcon } from "@/components/SocialIcon";
 import { StatCounter } from "@/components/StatCounter";
+import { TerminalName } from "@/components/TerminalName";
 import { TypewriterText } from "@/components/TypewriterText";
 
 function hasAvatar() {
@@ -24,6 +25,13 @@ export function Hero() {
       {/* Fondo decorativo */}
       <div className="pointer-events-none absolute inset-0 bg-grid-glow" />
 
+      {/* Blobs de luz difusa */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="hero-blob -left-24 -top-16 h-72 w-72 animate-blob-drift bg-accent/25 sm:h-96 sm:w-96" />
+        <div className="hero-blob -right-32 top-1/3 h-64 w-64 animate-blob-drift-slow bg-mint/15 sm:h-80 sm:w-80" />
+        <div className="hero-blob bottom-[-6rem] left-1/4 h-56 w-56 animate-blob-drift bg-lavender/15" />
+      </div>
+
       {/* Contenido principal */}
       <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-6 py-12 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-20 md:py-16">
         {/* Información */}
@@ -32,9 +40,10 @@ export function Hero() {
             Desarrollador Full-Stack
           </p>
 
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            Marco Lagunes
-          </h1>
+          <TerminalName
+            text="Marco Lagunes"
+            className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl"
+          />
 
           <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
             Arquitectura de Software · Aplicaciones Web · Ciberseguridad
@@ -95,22 +104,7 @@ export function Hero() {
 
         {/* Fotografía */}
         <div className="flex justify-center md:justify-end">
-          {avatarExists ? (
-            <div className="relative h-56 w-56 overflow-hidden rounded-full border border-border shadow-2xl sm:h-64 sm:w-64">
-              <Image
-                src="/images/image.png"
-                alt="Marco Lagunes, desarrollador Full-Stack"
-                fill
-                priority
-                sizes="(max-width: 640px) 224px, 256px"
-                className="object-cover object-[center_20%]"
-              />
-            </div>
-          ) : (
-            <div className="flex h-56 w-56 items-center justify-center rounded-full border border-border bg-navy font-mono text-4xl text-accent sm:h-64 sm:w-64">
-              ML
-            </div>
-          )}
+          <HeroAvatar avatarExists={avatarExists} />
         </div>
       </div>
 
@@ -118,14 +112,23 @@ export function Hero() {
       <ScrollCue className="absolute inset-x-0 bottom-48 hidden text-center md:block" />
 
       {/* Estadísticas */}
-      <div className="relative mx-auto mt-12 grid w-full max-w-5xl grid-cols-2 gap-4 px-6 sm:grid-cols-4 md:absolute md:inset-x-0 md:bottom-8 md:mt-0">
-        {heroStats.map((stat) => (
-          <StatCounter
-            key={stat.label}
-            value={stat.value}
-            label={stat.label}
-          />
-        ))}
+      <div className="relative mt-12 border-y border-border bg-surface2/70 py-2 backdrop-blur-sm md:absolute md:inset-x-0 md:bottom-0 md:mt-0">
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-2 px-6 sm:grid-cols-4">
+          {heroStats.map((stat, index) => (
+            <div
+              key={stat.label}
+              className={
+                index % 2 === 1
+                  ? "border-l border-border"
+                  : index === 2
+                    ? "sm:border-l sm:border-border"
+                    : undefined
+              }
+            >
+              <StatCounter value={stat.value} label={stat.label} />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

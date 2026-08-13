@@ -28,15 +28,14 @@ export function StatCounter({ value, label }: { value: string; label: string }) 
   }, [inView, target]);
 
   return (
-    <div
-      ref={ref}
-      className="rounded-xl border border-border bg-card px-5 py-6 text-center"
-    >
-      <p className="font-mono text-3xl font-semibold text-accent">
+    <div ref={ref} className="px-2 py-5 text-center sm:px-4 sm:py-6">
+      <p className="font-mono text-2xl font-semibold text-accent sm:text-3xl">
         {display}
         {suffix}
       </p>
-      <p className="mt-2 text-xs text-muted-foreground">{label}</p>
+      <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">
+        {label}
+      </p>
     </div>
   );
 }

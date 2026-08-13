@@ -20,7 +20,7 @@ export function Skills() {
   const allSkillNames = skills.flatMap((category) => category.skills);
 
   return (
-    <section id="stack" className="scroll-mt-24 border-t border-border py-24">
+    <section id="stack" className="scroll-mt-24 border-t border-border bg-surface2/40 py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading eyebrow="stack" title="Stack técnico" />
 

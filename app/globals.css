@@ -4,18 +4,22 @@
 
 @layer base {
   :root {
-    --background: 222 47% 5%;
+    --background: 220 43% 4%;
     --foreground: 210 40% 98%;
-    --card: 222 40% 8%;
+    --surface-2: 218 42% 9%;
+    --surface-3: 218 38% 11%;
+    --card: 218 42% 9%;
     --card-foreground: 210 40% 98%;
-    --border: 222 30% 18%;
-    --muted: 222 25% 14%;
+    --border: 218 28% 18%;
+    --muted: 218 26% 15%;
     --muted-foreground: 215 20% 65%;
-    --navy: 222 55% 14%;
+    --navy: 218 45% 14%;
     --navy-foreground: 210 40% 98%;
-    --accent: 217 91% 60%;
-    --accent-foreground: 222 47% 5%;
-    --ring: 217 91% 60%;
+    --accent: 247 65% 66%;
+    --accent-foreground: 220 43% 7%;
+    --lavender: 249 69% 81%;
+    --mint: 163 65% 66%;
+    --ring: 247 65% 66%;
   }
 
   * {
@@ -55,9 +59,67 @@
     background: hsl(var(--accent) / 0.28);
     color: hsl(var(--foreground));
   }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--accent) / 0.55) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--accent) / 0.45);
+    border-radius: 9999px;
+    border: 2px solid hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent) / 0.7);
+  }
 }
 
 @layer components {
+  .text-gradient-hero {
+    background-image: linear-gradient(
+      to bottom right,
+      hsl(var(--foreground)),
+      hsl(var(--lavender))
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .avatar-ring-conic {
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--accent)),
+      hsl(var(--lavender)),
+      hsl(var(--mint)),
+      hsl(var(--accent))
+    );
+    animation: ring-spin 6s linear infinite;
+  }
+
+  .avatar-ring-dotted {
+    border: 2px dotted hsl(var(--accent) / 0.4);
+    animation: ring-spin-reverse 9s linear infinite;
+  }
+
+  .hero-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
   .particle-cursor-glow {
     width: min(44rem, 62vw);
     aspect-ratio: 1;
@@ -156,6 +218,41 @@
   }
 }
 
+@keyframes ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ring-spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes blob-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(4%, -6%) scale(1.08);
+  }
+  66% {
+    transform: translate(-3%, 4%) scale(0.95);
+  }
+}
+
 @media (hover: none), (pointer: coarse) {
   .particle-cursor-glow {
     display: none;
@@ -179,5 +276,11 @@
   .skill-chip,
   .skill-chip-icon {
     transition: none;
+  }
+
+  .avatar-ring-conic,
+  .avatar-ring-dotted,
+  .hero-blob {
+    animation: none !important;
   }
 }

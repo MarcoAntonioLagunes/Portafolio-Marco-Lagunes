@@ -48,9 +48,30 @@ export function ProjectCard({ project, index }: { project: ProjectItem; index: n
       whileHover={reduced ? undefined : { y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
       whileTap={reduced ? undefined : { y: -2, transition: { duration: 0.15, ease: "easeOut" } }}
       style={{ rotateX, rotateY, transformPerspective: 800 }}
-      className="flex h-full flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-lg shadow-black/0 transition-shadow duration-300 hover:shadow-2xl hover:shadow-black/40"
+      className="group flex h-full flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-lg shadow-black/0 transition-[box-shadow,border-color] duration-300 hover:border-accent/50 hover:shadow-[0_0_36px_-10px_hsl(var(--accent)/0.55)]"
     >
       <div>
+        {project.status && (
+          <span
+            className={
+              "mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest " +
+              (project.status === "En producción"
+                ? "border-mint/40 bg-mint/10 text-mint"
+                : "border-border bg-muted text-muted-foreground")
+            }
+          >
+            {project.status === "En producción" && (
+              <span className="relative flex h-1.5 w-1.5">
+                {!reduced && (
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mint opacity-75" />
+                )}
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-mint" />
+              </span>
+            )}
+            {project.status}
+          </span>
+        )}
+
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="text-lg font-semibold text-foreground">{project.title}</h3>
