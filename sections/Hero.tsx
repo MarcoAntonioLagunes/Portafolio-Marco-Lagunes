@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { Download } from "lucide-react";
 import { heroStats, socialLinks } from "@/lib/data";
 import { HeroAvatar } from "@/components/HeroAvatar";
 import { ScrollCue } from "@/components/ScrollCue";
@@ -78,6 +79,14 @@ export function Hero() {
               className="rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:scale-[1.04] hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98]"
             >
               Contactarme
+            </a>
+
+            <a
+              href="/Marks_CV.pdf"
+              download="Marco-Lagunes-CV.pdf"
+              className="flex items-center gap-2 rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:scale-[1.04] hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98]"
+            >
+              <Download className="h-4 w-4 text-accent" /> Descargar CV
             </a>
           </div>
 
