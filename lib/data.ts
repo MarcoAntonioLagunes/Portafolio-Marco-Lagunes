@@ -174,13 +174,32 @@ export const projects: ProjectItem[] = [
     ],
   },
   {
-    title: "Arquitectura IoT: Redes y Sensores",
-    subtitle: "Proyecto académico",
-    period: "",
+    title: "MKDevSoft — Plataforma de Negocio",
+    subtitle: "Emprendimiento propio · mkdevsoft.netlify.app",
+    period: "2025 – Presente",
     description:
-      "Red distribuida de dispositivos IoT con gestión de sensores y controles de ciberseguridad aplicados en un entorno de hardware distribuido.",
-    stack: ["IoT", "Redes", "Ciberseguridad", "Cisco"],
-    status: "Académico",
+      "Sitio institucional y de captación de clientes para mi propia iniciativa de desarrollo de software, dirigida a pequeñas y medianas empresas de la región de Veracruz/Boca del Río. Incluye showcase de plantillas, servicios y formulario de contacto.",
+    stack: ["Next.js", "Tailwind CSS", "Framer Motion", "Vercel"],
+    href: "https://mkdevsoft.netlify.app/",
+    status: "Proyecto personal",
+    mockUrl: "mkdevsoft.netlify.app",
+    gallery: [
+      {
+        type: "video",
+        src: "/images/mkdevsoft/videomkdevsoft.mp4",
+        alt: "Recorrido en video del sitio de MKDevSoft",
+      },
+      {
+        type: "video",
+        src: "/images/mkdevsoft/videoclipmkdevsoft.mp4",
+        alt: "Clip corto de la interfaz de MKDevSoft",
+      },
+      {
+        type: "image",
+        src: "/images/mkdevsoft/Interfaz%20mkdevsoft.png",
+        alt: "Interfaz principal del sitio de MKDevSoft",
+      },
+    ],
   },
 ];
 
