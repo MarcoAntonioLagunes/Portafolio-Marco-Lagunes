@@ -114,7 +114,31 @@ export const projects: ProjectItem[] = [
     description:
       "Plataforma full-stack construida para una asociación nacional de oficiales de marina mercante, para digitalizar su proceso de evaluación de CVs, con autenticación JWT, control de acceso por roles y backend con REST API.",
     stack: ["React", "Node.js", "MongoDB", "JWT", "REST API"],
+    href: "https://reclutamiento-asommmn.netlify.app/",
     status: "En producción",
+    mockUrl: "reclutamiento-asommmn.netlify.app",
+    gallery: [
+      {
+        type: "video",
+        src: "/images/asommmn/Login%20asommmn.mp4",
+        alt: "Demostración del flujo de inicio de sesión de la plataforma ASOMMMN",
+      },
+      {
+        type: "image",
+        src: "/images/asommmn/Interfaz%20admin.png",
+        alt: "Panel de administración de la plataforma de evaluación de CVs",
+      },
+      {
+        type: "image",
+        src: "/images/asommmn/Interfaz%20postulante.png",
+        alt: "Vista del postulante en la plataforma de evaluación de CVs",
+      },
+      {
+        type: "image",
+        src: "/images/asommmn/Panel%20de%20documentos%20y%20asistente%20IA.png",
+        alt: "Panel de documentos con asistente de IA para revisión de CVs",
+      },
+    ],
   },
   {
     title: "Plataforma Web Full-Stack con Autenticación",
@@ -123,8 +147,31 @@ export const projects: ProjectItem[] = [
     description:
       "Aplicación cliente-servidor con autenticación JWT, REST APIs y base de datos MongoDB. Desplegada en la nube con seguridad integrada de principio a fin, accesible desde web y móvil.",
     stack: ["React", "Node.js", "MongoDB", "JWT", "Cloud"],
-    href: "https://ultranube.com.mx",
+    href: "https://ultranube.com.mx/",
     status: "Proyecto personal",
+    mockUrl: "ultranube.com.mx",
+    gallery: [
+      {
+        type: "image",
+        src: "/images/ultranube/Dasboard.png",
+        alt: "Panel principal del dashboard de UltraNube con métricas de uso",
+      },
+      {
+        type: "image",
+        src: "/images/ultranube/Interfaz.png",
+        alt: "Interfaz de usuario principal de la plataforma UltraNube",
+      },
+      {
+        type: "image",
+        src: "/images/ultranube/agente%20de%20presentaciones.png",
+        alt: "Agente de IA para generación de presentaciones dentro de UltraNube",
+      },
+      {
+        type: "image",
+        src: "/images/ultranube/agente%20traductor.png",
+        alt: "Agente de IA traductor integrado en UltraNube",
+      },
+    ],
   },
   {
     title: "Arquitectura IoT: Redes y Sensores",

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { fadeInUpProps } from "@/lib/animations";
+import { ProjectGallery } from "@/components/ProjectGallery";
 import type { ProjectItem } from "@/lib/types";
 
 export function ProjectCard({ project, index }: { project: ProjectItem; index: number }) {
@@ -99,6 +100,10 @@ export function ProjectCard({ project, index }: { project: ProjectItem; index: n
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
           {project.description}
         </p>
+
+        {project.gallery && project.gallery.length > 0 && (
+          <ProjectGallery items={project.gallery} mockUrl={project.mockUrl} projectTitle={project.title} />
+        )}
       </div>
 
       <ul className="mt-6 flex flex-wrap gap-2">

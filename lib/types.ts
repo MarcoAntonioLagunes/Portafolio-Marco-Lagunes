@@ -17,6 +17,21 @@ export interface ExperienceItem {
   bullets: string[];
 }
 
+export interface GalleryImageItem {
+  type: "image";
+  src: string;
+  alt: string;
+}
+
+export interface GalleryVideoItem {
+  type: "video";
+  src: string;
+  alt: string;
+  poster?: string;
+}
+
+export type GalleryItem = GalleryImageItem | GalleryVideoItem;
+
 export interface ProjectItem {
   title: string;
   subtitle: string;
@@ -25,6 +40,8 @@ export interface ProjectItem {
   stack: string[];
   href?: string;
   status?: "En producción" | "Proyecto personal" | "Académico";
+  mockUrl?: string;
+  gallery?: GalleryItem[];
 }
 
 export interface CertificationItem {
