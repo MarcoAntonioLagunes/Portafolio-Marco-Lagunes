@@ -1,11 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useBooted } from "@/lib/boot-context";
 import { cn } from "@/lib/utils";
 
 export function TypewriterText({ text, className }: { text: string; className?: string }) {
-  const { booted } = useBooted();
   const words = text.split(" ");
 
   return (
@@ -15,7 +13,7 @@ export function TypewriterText({ text, className }: { text: string; className?: 
           key={`${word}-${i}`}
           aria-hidden="true"
           initial={{ opacity: 0, y: 8 }}
-          animate={booted ? { opacity: 1, y: 0 } : {}}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 + i * 0.06, ease: "easeOut" }}
           className="mr-[0.3em] inline-block"
         >

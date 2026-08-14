@@ -2,16 +2,14 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
-import { useBooted } from "@/lib/boot-context";
 
 export function HeroAvatar({ avatarExists }: { avatarExists: boolean }) {
   const reduced = useReducedMotion();
-  const { booted } = useBooted();
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.92 }}
-      animate={booted ? { opacity: 1, scale: 1 } : {}}
+      initial={reduced ? false : { opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
       className="relative h-56 w-56 sm:h-64 sm:w-64"
     >

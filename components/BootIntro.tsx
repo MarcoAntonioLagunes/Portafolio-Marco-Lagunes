@@ -73,8 +73,6 @@ export function BootIntro() {
     });
   };
 
-  if (!visible) return null;
-
   return (
     <AnimatePresence onExitComplete={() => setBooted(true)}>
       {visible && (

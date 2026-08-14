@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import { useBooted } from "@/lib/boot-context";
 import { cn } from "@/lib/utils";
 
+const START_DELAY_MS = 200;
+const CHAR_INTERVAL_MS = 55;
+
 export function TerminalName({ text, className }: { text: string; className?: string }) {
-  const { booted } = useBooted();
   const reduced = useReducedMotion();
   const [count, setCount] = useState(reduced ? text.length : 0);
 
   useEffect(() => {
-    if (reduced || !booted || count >= text.length) return;
-    const id = window.setTimeout(() => setCount((c) => c + 1), 55);
+    if (reduced || count >= text.length) return;
+    const delay = count === 0 ? START_DELAY_MS : CHAR_INTERVAL_MS;
+    const id = window.setTimeout(() => setCount((c) => c + 1), delay);
     return () => window.clearTimeout(id);
-  }, [booted, count, reduced, text.length]);
+  }, [count, reduced, text.length]);
 
   return (
     <h1 aria-label={text} className={cn(className)}>
