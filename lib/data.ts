@@ -189,16 +189,6 @@ export const projects: ProjectItem[] = [
         src: "/images/mkdevsoft/videomkdevsoft.mp4",
         alt: "Recorrido en video del sitio de MKDevSoft",
       },
-      {
-        type: "video",
-        src: "/images/mkdevsoft/videoclipmkdevsoft.mp4",
-        alt: "Clip corto de la interfaz de MKDevSoft",
-      },
-      {
-        type: "image",
-        src: "/images/mkdevsoft/Interfaz%20mkdevsoft.png",
-        alt: "Interfaz principal del sitio de MKDevSoft",
-      },
     ],
   },
 ];
