@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { BootProvider } from "@/lib/boot-context";
 import { BootIntro } from "@/components/BootIntro";
+import { CustomCursor } from "@/components/CustomCursor";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ParticleBackground } from "@/components/ParticleBackground";
@@ -94,6 +95,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         <BootProvider>
+          <CustomCursor />
           <ParticleBackground />
           <ScrollProgress />
 
