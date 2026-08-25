@@ -6,6 +6,7 @@ import { HeroAvatar } from "@/components/HeroAvatar";
 import { ScrollCue } from "@/components/ScrollCue";
 import { SocialIcon } from "@/components/SocialIcon";
 import { StatCounter } from "@/components/StatCounter";
+import { TerminalHero } from "@/components/TerminalHero";
 import { TerminalName } from "@/components/TerminalName";
 import { TypewriterText } from "@/components/TypewriterText";
 
@@ -108,6 +109,11 @@ export function Hero() {
                 <SocialIcon icon={link.icon} className="h-5 w-5" />
               </a>
             ))}
+          </div>
+
+          {/* Terminal interactiva */}
+          <div className="mt-10 flex w-full justify-center md:justify-start">
+            <TerminalHero />
           </div>
         </div>
 
