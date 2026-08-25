@@ -86,7 +86,7 @@ export function Footer() {
           -webkit-background-clip: text;
           color: transparent;
           -webkit-text-fill-color: transparent;
-          animation: sweep 4s ease-in-out infinite;
+          animation: sweep 7s ease-in-out infinite;
           opacity: 0.18;
         }
 
