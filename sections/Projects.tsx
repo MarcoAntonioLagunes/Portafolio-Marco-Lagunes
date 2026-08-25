@@ -8,9 +8,14 @@ export function Projects() {
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading eyebrow="proyectos" title="Proyectos destacados" />
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {projects.map((project, index) => (
-            <ProjectCard key={project.title} project={project} index={index} />
+            <ProjectCard
+              key={project.title}
+              project={project}
+              index={index}
+              className={project.subtitle === "ASOMMMN" ? "md:col-span-2" : undefined}
+            />
           ))}
         </div>
       </div>
