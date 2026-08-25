@@ -98,14 +98,9 @@
   }
 
   .avatar-ring-conic {
-    background: conic-gradient(
-      from 0deg,
-      hsl(var(--accent)),
-      hsl(var(--lavender)),
-      hsl(var(--mint)),
-      hsl(var(--accent))
-    );
-    animation: ring-spin 6s linear infinite;
+    background: conic-gradient(#7c6fe0, #40c8e0, #e040a0, #7c6fe0);
+    animation: ring-spin 8s linear infinite;
+    box-shadow: 0 0 20px rgba(124, 111, 224, 0.3);
   }
 
   .avatar-ring-dotted {
