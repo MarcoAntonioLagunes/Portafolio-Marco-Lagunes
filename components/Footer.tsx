@@ -17,7 +17,7 @@ export function Footer() {
       <div className="relative z-10 flex items-center justify-between px-8 pt-5 pb-1">
         <span className="text-white font-semibold text-sm">Marco Lagunes</span>
         <span className="text-white/40 text-xs text-center">
-          © {year} Marco Lagunes &nbsp;·&nbsp; Boca del Río, Veracruz &nbsp;·&nbsp;
+          © {year}{" "}Marco Lagunes &nbsp;·&nbsp; Boca del Río, Veracruz &nbsp;·&nbsp;
           <a
             href="https://portafolio-marco-lagunes.netlify.app"
             target="_blank"

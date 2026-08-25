@@ -19,7 +19,7 @@ export const heroStats: HeroStat[] = [
 export const socialLinks: SocialLink[] = [
   {
     label: "GitHub",
-    href: "https://github.com/TU_USUARIO", // TODO: reemplazar por el usuario de GitHub real
+    href: "https://github.com/MarcoAntonioLagunes",
     icon: "github",
   },
   {
