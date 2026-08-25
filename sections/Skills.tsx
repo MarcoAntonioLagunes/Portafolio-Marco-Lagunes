@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Code2, Server, ShieldCheck, Wrench } from "lucide-react";
 import { Marquee } from "@/components/Marquee";
+import { ParticleBackground } from "@/components/ParticleBackground";
 import { SectionHeading } from "@/components/SectionHeading";
 import { fadeInUpItemVariants, staggerContainerProps } from "@/lib/animations";
 import { skills } from "@/lib/data";
@@ -20,8 +21,9 @@ export function Skills() {
   const allSkillNames = skills.flatMap((category) => category.skills);
 
   return (
-    <section id="stack" className="scroll-mt-24 border-t border-border bg-surface2/40 py-24">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="stack" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border bg-surface2/40 py-24">
+      <ParticleBackground density="medium" />
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
         <SectionHeading eyebrow="stack" title="Stack técnico" />
 
         <Marquee items={allSkillNames} className="mb-10" />

@@ -1,11 +1,13 @@
 import { SectionHeading } from "@/components/SectionHeading";
 import { TimelineItem } from "@/components/TimelineItem";
+import { ParticleBackground } from "@/components/ParticleBackground";
 import { experience } from "@/lib/data";
 
 export function Experience() {
   return (
-    <section id="experiencia" className="scroll-mt-24 border-t border-border py-24">
-      <div className="mx-auto max-w-3xl px-6">
+    <section id="experiencia" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border py-24">
+      <ParticleBackground density="medium" />
+      <div className="relative z-10 mx-auto max-w-3xl px-6">
         <SectionHeading eyebrow="experiencia" title="Trayectoria profesional" />
 
         <ul>

@@ -5,7 +5,6 @@ import { BootIntro } from "@/components/BootIntro";
 import { CustomCursor } from "@/components/CustomCursor";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { ParticleBackground } from "@/components/ParticleBackground";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import "./globals.css";
 
@@ -96,7 +95,6 @@ export default function RootLayout({
       <body className="min-h-full bg-background text-foreground">
         <BootProvider>
           <CustomCursor />
-          <ParticleBackground />
           <ScrollProgress />
 
           <div className="relative z-10 flex min-h-screen flex-col">

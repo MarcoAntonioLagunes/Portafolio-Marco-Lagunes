@@ -9,6 +9,7 @@ import { StatCounter } from "@/components/StatCounter";
 import { TerminalHero } from "@/components/TerminalHero";
 import { TerminalName } from "@/components/TerminalName";
 import { TypewriterText } from "@/components/TypewriterText";
+import { FloatingCodeBackground } from "@/components/FloatingCodeBackground";
 
 function hasAvatar() {
   return fs.existsSync(
@@ -22,10 +23,11 @@ export function Hero() {
   return (
     <section
       id="sobre-mi"
-      className="relative flex min-h-screen flex-col overflow-hidden pb-12 pt-24 md:pb-64"
+      className="relative isolate flex min-h-screen flex-col overflow-hidden pb-12 pt-24 md:pb-64"
     >
       {/* Fondo decorativo */}
       <div className="pointer-events-none absolute inset-0 bg-grid-glow" />
+      <FloatingCodeBackground density="high" variant="hero" />
 
       {/* Blobs de luz difusa */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -35,7 +37,7 @@ export function Hero() {
       </div>
 
       {/* Contenido principal */}
-      <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-6 py-12 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-20 md:py-16">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 px-6 py-12 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-20 md:py-16">
         {/* Información */}
         <div className="flex animate-fade-in-up flex-col items-center text-center md:items-start md:text-left">
           <p className="font-mono text-xs uppercase tracking-widest text-accent">
@@ -127,7 +129,7 @@ export function Hero() {
       <ScrollCue className="absolute inset-x-0 bottom-48 hidden text-center md:block" />
 
       {/* Estadísticas */}
-      <div className="relative mt-12 border-y border-border bg-surface2/70 py-2 backdrop-blur-sm md:absolute md:inset-x-0 md:bottom-0 md:mt-0">
+      <div className="relative z-10 mt-12 border-y border-border bg-surface2/70 py-2 backdrop-blur-sm md:absolute md:inset-x-0 md:bottom-0 md:mt-0">
         <div className="mx-auto grid w-full max-w-5xl grid-cols-2 px-6 sm:grid-cols-4">
           {heroStats.map((stat, index) => (
             <div

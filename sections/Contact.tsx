@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Download, Mail, MessageCircle, Phone } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SocialIcon } from "@/components/SocialIcon";
+import { FloatingCodeBackground } from "@/components/FloatingCodeBackground";
 import { fadeInUpProps } from "@/lib/animations";
 import { socialLinks } from "@/lib/data";
 
@@ -46,8 +47,9 @@ export function Contact() {
   };
 
   return (
-    <section id="contacto" className="scroll-mt-24 border-t border-border bg-surface3/50 py-24">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="contacto" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border bg-surface3/50 py-24">
+      <FloatingCodeBackground density="low" opacity="subtle" variant="contact" />
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
         <SectionHeading eyebrow="contacto" title="Hablemos" />
 
         <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:gap-12">

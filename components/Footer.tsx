@@ -14,7 +14,7 @@ export function Footer() {
       </div>
 
       {/* Fila superior */}
-      <div className="relative z-10 flex items-center justify-between px-8 pt-5 pb-1">
+      <div className="relative z-10 flex flex-col items-center gap-1.5 px-6 pt-6 pb-2 text-center sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:pt-5 sm:pb-1 sm:text-left">
         <span className="text-white font-semibold text-sm">Marco Lagunes</span>
         <span className="text-white/40 text-xs text-center">
           © {year}{" "}Marco Lagunes &nbsp;·&nbsp; Boca del Río, Veracruz &nbsp;·&nbsp;

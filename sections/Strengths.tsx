@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { SectionHeading } from "@/components/SectionHeading";
+import { ParticleBackground } from "@/components/ParticleBackground";
 import { EASE_OUT, fadeInUpItemVariants, staggerContainerProps, VIEWPORT_ONCE } from "@/lib/animations";
 import { interests, languages, strengths } from "@/lib/data";
 
@@ -64,8 +65,9 @@ export function Strengths() {
   const reduced = !!useReducedMotion();
 
   return (
-    <section id="fortalezas" className="scroll-mt-24 border-t border-border py-24">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="fortalezas" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border py-24">
+      <ParticleBackground density="low" />
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
         <SectionHeading eyebrow="fortalezas" title="Fortalezas, idiomas e intereses" />
 
         <motion.div {...staggerContainerProps(reduced)} className="grid gap-6 md:grid-cols-3">
