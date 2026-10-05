@@ -56,7 +56,9 @@ function GallerySlideVideo({
       loop
       playsInline
       preload="metadata"
-      controls={hovered}
+      controls={hovered || reduced}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       aria-label={item.alt}

@@ -1,67 +1,50 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
+const chipClass =
+  "shrink-0 rounded-full border border-border bg-muted px-4 py-2 font-mono text-xs text-muted-foreground";
+
+/**
+ * Marquesina infinita solo con CSS. La segunda copia existe solo para el loop visual,
+ * por eso va aria-hidden: los lectores de pantalla leen la lista una vez.
+ * Con prefers-reduced-motion se oculta la copia y la lista se muestra estática y envuelta.
+ */
 export function Marquee({
   items,
   durationSeconds = 26,
+  label,
   className,
 }: {
   items: string[];
   durationSeconds?: number;
+  label?: string;
   className?: string;
 }) {
-  const reduced = useReducedMotion();
-  const [tabHidden, setTabHidden] = useState(false);
-
-  useEffect(() => {
-    const handleVisibility = () => setTabHidden(document.hidden);
-    document.addEventListener("visibilitychange", handleVisibility);
-    return () => document.removeEventListener("visibilitychange", handleVisibility);
-  }, []);
-
-  if (reduced) {
-    return (
-      <ul className={cn("flex flex-wrap justify-center gap-2", className)}>
-        {items.map((item) => (
-          <li
-            key={item}
-            className="rounded-full border border-border bg-muted px-4 py-2 font-mono text-xs text-muted-foreground"
-          >
-            {item}
-          </li>
-        ))}
-      </ul>
-    );
-  }
-
-  const track = [...items, ...items];
-
   return (
     <div
       className={cn(
-        "group overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]",
+        "marquee group overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] motion-reduce:[mask-image:none]",
         className,
       )}
     >
-      <ul
-        className="flex w-max gap-3 animate-marquee group-hover:[animation-play-state:paused]"
-        style={{
-          animationDuration: `${durationSeconds}s`,
-          animationPlayState: tabHidden ? "paused" : undefined,
-        }}
+      <div
+        className="marquee-track flex w-max animate-marquee group-hover:[animation-play-state:paused]"
+        style={{ animationDuration: `${durationSeconds}s` }}
       >
-        {track.map((item, i) => (
-          <li
-            key={`${item}-${i}`}
-            className="shrink-0 rounded-full border border-border bg-muted px-4 py-2 font-mono text-xs text-muted-foreground"
-          >
-            {item}
-          </li>
-        ))}
-      </ul>
+        <ul aria-label={label} className="marquee-list flex shrink-0 gap-3 pr-3">
+          {items.map((item) => (
+            <li key={item} className={chipClass}>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <ul aria-hidden="true" className="marquee-copy flex shrink-0 gap-3 pr-3">
+          {items.map((item) => (
+            <li key={item} className={chipClass}>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

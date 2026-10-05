@@ -1,3 +1,4 @@
+import { GITHUB_URL, LINKEDIN_URL } from "./site";
 import type {
   CertificationItem,
   EducationItem,
@@ -19,12 +20,12 @@ export const heroStats: HeroStat[] = [
 export const socialLinks: SocialLink[] = [
   {
     label: "GitHub",
-    href: "https://github.com/MarcoAntonioLagunes",
+    href: GITHUB_URL,
     icon: "github",
   },
   {
     label: "LinkedIn",
-    href: "https://linkedin.com/in/marco-lagunes",
+    href: LINKEDIN_URL,
     icon: "linkedin",
   },
   {
@@ -120,22 +121,23 @@ export const projects: ProjectItem[] = [
     gallery: [
       {
         type: "video",
-        src: "/images/asommmn/Login%20asommmn.mp4",
+        src: "/images/asommmn/login-asommmn.mp4",
+        poster: "/images/asommmn/login-asommmn-poster.jpg",
         alt: "Demostración del flujo de inicio de sesión de la plataforma ASOMMMN",
       },
       {
         type: "image",
-        src: "/images/asommmn/Interfaz%20admin.png",
+        src: "/images/asommmn/interfaz-admin.png",
         alt: "Panel de administración de la plataforma de evaluación de CVs",
       },
       {
         type: "image",
-        src: "/images/asommmn/Interfaz%20postulante.png",
+        src: "/images/asommmn/interfaz-postulante.png",
         alt: "Vista del postulante en la plataforma de evaluación de CVs",
       },
       {
         type: "image",
-        src: "/images/asommmn/Panel%20de%20documentos%20y%20asistente%20IA.png",
+        src: "/images/asommmn/panel-documentos-asistente-ia.png",
         alt: "Panel de documentos con asistente de IA para revisión de CVs",
       },
     ],
@@ -147,28 +149,28 @@ export const projects: ProjectItem[] = [
     description:
       "Aplicación cliente-servidor con autenticación JWT, REST APIs y base de datos MongoDB. Desplegada en la nube con seguridad integrada de principio a fin, accesible desde web y móvil.",
     stack: ["React", "Node.js", "MongoDB", "JWT", "Cloud"],
-    href: "https://ultranube.com.mx/",
+    // Link oculto: el sitio no responde (ver TODO.md).
     status: "Proyecto personal",
     mockUrl: "ultranube.com.mx",
     gallery: [
       {
         type: "image",
-        src: "/images/ultranube/Dasboard.png",
+        src: "/images/ultranube/dashboard.png",
         alt: "Panel principal del dashboard de UltraNube con métricas de uso",
       },
       {
         type: "image",
-        src: "/images/ultranube/Interfaz.png",
+        src: "/images/ultranube/interfaz.png",
         alt: "Interfaz de usuario principal de la plataforma UltraNube",
       },
       {
         type: "image",
-        src: "/images/ultranube/agente%20de%20presentaciones.png",
+        src: "/images/ultranube/agente-presentaciones.png",
         alt: "Agente de IA para generación de presentaciones dentro de UltraNube",
       },
       {
         type: "image",
-        src: "/images/ultranube/agente%20traductor.png",
+        src: "/images/ultranube/agente-traductor.png",
         alt: "Agente de IA traductor integrado en UltraNube",
       },
     ],
@@ -179,14 +181,15 @@ export const projects: ProjectItem[] = [
     period: "2025 – Presente",
     description:
       "Sitio institucional y de captación de clientes para mi propia iniciativa de desarrollo de software, dirigida a pequeñas y medianas empresas de la región de Veracruz/Boca del Río. Incluye showcase de plantillas, servicios y formulario de contacto.",
-    stack: ["Next.js", "Tailwind CSS", "Framer Motion", "Vercel"],
-    href: "https://mkdevsoft.netlify.app/",
+    stack: ["Next.js", "Tailwind CSS", "Framer Motion", "Netlify"],
+    // Link oculto: el sitio no responde (ver TODO.md).
     status: "Proyecto personal",
     mockUrl: "mkdevsoft.netlify.app",
     gallery: [
       {
         type: "video",
-        src: "/images/mkdevsoft/videomkdevsoft.mp4",
+        src: "/images/mkdevsoft/recorrido-mkdevsoft.mp4",
+        poster: "/images/mkdevsoft/recorrido-mkdevsoft-poster.jpg",
         alt: "Recorrido en video del sitio de MKDevSoft",
       },
     ],

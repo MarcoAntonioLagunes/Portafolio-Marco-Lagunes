@@ -10,7 +10,8 @@ const SESSION_KEY = "ml_boot_seen";
 const MUTE_KEY = "ml_boot_muted";
 const BOOT_DURATION = 1.7;
 
-export function BootIntro() {
+/** `soundSrc` solo se pasa si el archivo existe en public/ (lo verifica el layout en el servidor). */
+export function BootIntro({ soundSrc }: { soundSrc?: string }) {
   const { setBooted } = useBooted();
   const reducedMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
@@ -41,11 +42,11 @@ export function BootIntro() {
   }, [visible]);
 
   useEffect(() => {
-    if (!visible || muted) return;
+    if (!visible || muted || !soundSrc) return;
     audioRef.current?.play().catch(() => {
       // Autoplay bloqueado por el navegador: se omite en silencio.
     });
-  }, [visible, muted]);
+  }, [visible, muted, soundSrc]);
 
   const finish = () => {
     if (finishedRef.current) return;
@@ -89,6 +90,7 @@ export function BootIntro() {
           }
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
+          {soundSrc && (
           <button
             type="button"
             aria-label={muted ? "Activar sonido de inicio" : "Silenciar sonido de inicio"}
@@ -100,6 +102,7 @@ export function BootIntro() {
           >
             {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </button>
+          )}
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -132,7 +135,7 @@ export function BootIntro() {
             presiona cualquier tecla para omitir
           </p>
 
-          <audio ref={audioRef} src="/sounds/boot.mp3" preload="auto" muted={muted} />
+          {soundSrc && <audio ref={audioRef} src={soundSrc} preload="auto" muted={muted} />}
         </motion.div>
       )}
     </AnimatePresence>

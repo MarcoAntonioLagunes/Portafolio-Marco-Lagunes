@@ -1,34 +1,32 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-const START_DELAY_MS = 200;
-const CHAR_INTERVAL_MS = 55;
+const START_DELAY_S = 0.2;
+const CHAR_INTERVAL_S = 0.055;
 
+/**
+ * Nombre con efecto de tecleo, solo CSS: el texto completo llega en el HTML SSR
+ * (crawlers, previews y lectores sin JS) y cada carácter aparece con un retraso escalonado.
+ * Con prefers-reduced-motion se muestra completo de inmediato (ver .type-char en globals.css).
+ */
 export function TerminalName({ text, className }: { text: string; className?: string }) {
-  const reduced = useReducedMotion();
-  const [count, setCount] = useState(reduced ? text.length : 0);
-
-  useEffect(() => {
-    if (reduced || count >= text.length) return;
-    const delay = count === 0 ? START_DELAY_MS : CHAR_INTERVAL_MS;
-    const id = window.setTimeout(() => setCount((c) => c + 1), delay);
-    return () => window.clearTimeout(id);
-  }, [count, reduced, text.length]);
+  const chars = Array.from(text);
 
   return (
     <h1 aria-label={text} className={cn(className)}>
       <span aria-hidden="true" className="text-gradient-hero">
-        {text.slice(0, count)}
+        {chars.map((char, i) => (
+          <span
+            key={i}
+            className="type-char"
+            style={{ animationDelay: `${START_DELAY_S + i * CHAR_INTERVAL_S}s` }}
+          >
+            {char}
+          </span>
+        ))}
       </span>
       <span
         aria-hidden="true"
-        className={cn(
-          "ml-1 inline-block h-[0.85em] w-[3px] translate-y-[0.1em] bg-accent align-middle",
-          !reduced && "animate-blink",
-        )}
+        className="ml-1 inline-block h-[0.85em] w-[3px] translate-y-[0.1em] animate-blink bg-accent align-middle motion-reduce:animate-none"
       />
     </h1>
   );

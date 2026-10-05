@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# El CV se renombró: los links viejos (CV enviados, LinkedIn, etc.) siguen funcionando.
+[[redirects]]
+  from = "/Marks_CV.pdf"
+  to = "/Marco_Lagunes_CV.pdf"
+  status = 301
