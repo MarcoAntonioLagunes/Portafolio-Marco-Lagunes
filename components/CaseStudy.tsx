@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
+import { TrackCaseStudyView } from "@/components/Analytics";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { ProjectGallery } from "@/components/ProjectGallery";
 import { SocialIcon } from "@/components/SocialIcon";
@@ -54,6 +55,7 @@ export function CaseStudy({
 
   return (
     <main id="top" className="relative flex-1 pb-24 pt-28">
+      <TrackCaseStudyView slug={project.slug} locale={profile.locale} />
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-grid-glow" />
       <article className="relative mx-auto max-w-4xl px-6">
         <Link href={`${homePath}#proyectos`} className="inline-flex items-center gap-2 rounded-sm font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">

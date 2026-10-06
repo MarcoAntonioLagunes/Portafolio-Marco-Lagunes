@@ -62,6 +62,35 @@ curl -X POST -d '{}' "https://api.netlify.com/build_hooks/<ID>"
 
 **Opcional:** define la variable `GITHUB_TOKEN` en Netlify (*Site configuration → Environment variables*), con un token sin permisos (solo lectura pública), para subir el límite de la API de GitHub durante el build. Sin token también funciona: si la API falla, la sección muestra un link al perfil en lugar de los repos.
 
+## Analytics (Umami, sin cookies)
+
+El script solo se carga si existe la variable `NEXT_PUBLIC_UMAMI_WEBSITE_ID`. Sin ella no se carga nada.
+
+1. Crea una cuenta en [Umami Cloud](https://cloud.umami.is) (plan gratuito) y agrega el sitio `portafoliomarcolagunes.netlify.app`.
+2. Copia el *Website ID* y defínelo en Netlify (*Site configuration → Environment variables*) como `NEXT_PUBLIC_UMAMI_WEBSITE_ID`.
+3. Si usas Umami self-hosted, define también `NEXT_PUBLIC_UMAMI_SRC` con la URL de tu `script.js`.
+4. Haz un nuevo deploy: la variable se incorpora en el build.
+
+Eventos que se registran (definidos en `lib/analytics.ts`):
+
+| Evento | Cuándo | Propiedades |
+|---|---|---|
+| `download_cv` | Clic en "Descargar CV" | `locale` |
+| `click_linkedin` / `click_github` / `click_whatsapp` / `click_email` / `click_phone` | Clic en esos links | `locale` |
+| `click_project_demo` | Clic en el link al sitio de un proyecto | `locale`, `project` |
+| `contact_form_submit` | Envío exitoso del formulario | `locale` |
+| `case_study_view` | Visita a un caso de estudio | `slug`, `locale` |
+| `change_language` | Uso del selector de idioma | `locale`, `to` |
+
+Para registrar un evento nuevo en cualquier componente, incluso de servidor, agrega `data-event="nombre"` al elemento. Los atributos `data-event-*` se envían como propiedades. Cambiar de proveedor implica editar solo `lib/analytics.ts` y `components/Analytics.tsx`.
+
+## SEO
+
+- Rutas por idioma: `/es` y `/en`. `proxy.ts` redirige `/` según la cookie `NEXT_LOCALE` (elección manual) o el `Accept-Language`.
+- Cada página tiene `canonical` y `hreflang` (`es`, `en`, `x-default`). `sitemap.xml` incluye las alternativas.
+- JSON-LD `Person` por idioma en el home, generado desde el perfil (`lib/seo.ts`).
+- Imágenes OG generadas con `next/og` para el home y cada caso de estudio.
+
 ## Despliegue
 
 `netlify.toml` define el build (`npm run build`) y el redirect 301 de `/Marks_CV.pdf` a `/Marco_Lagunes_CV.pdf`, para no romper links viejos al CV.

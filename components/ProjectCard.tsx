@@ -81,6 +81,8 @@ export function ProjectCard({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${strings.visit}: ${project.title} ${strings.opensInNewTab}`}
+              data-event="click_project_demo"
+              data-event-project={project.slug}
               className="shrink-0 rounded-sm p-1 text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <ExternalLink aria-hidden="true" className="h-4 w-4" />

@@ -10,7 +10,8 @@ import { Skills } from "@/sections/Skills";
 import { Strengths } from "@/sections/Strengths";
 import { Contact } from "@/sections/Contact";
 import { getProfile, homePath, isLocale, projectPath } from "@/content";
-import { localeAlternates } from "@/lib/seo";
+import { localeAlternates, personJsonLd } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
 /** ISR: la sección "Ahora mismo" consulta GitHub; la página se regenera como máximo cada 24 h. */
 export const revalidate = 86400;
@@ -28,6 +29,10 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   const profile = getProfile(lang);
   return (
     <main id="top" className="flex-1">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd(profile, `${SITE_URL}${homePath(lang)}`)) }}
+      />
       <Hero profile={profile} />
       <Experience profile={profile} />
       <Projects profile={profile} projectPath={(slug) => projectPath(lang, slug)} />

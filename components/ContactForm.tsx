@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Locale, Profile } from "@/content/types";
+import { track } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -59,6 +60,7 @@ export function ContactForm({ t, locale }: { t: ContactStrings; locale: Locale }
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setStatus("success");
+      track("contact_form_submit", { locale });
       form.reset();
     } catch {
       setStatus("error");

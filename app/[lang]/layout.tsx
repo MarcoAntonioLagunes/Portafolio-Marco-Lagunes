@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { BootProvider } from "@/lib/boot-context";
+import { Analytics } from "@/components/Analytics";
 import { BootIntro } from "@/components/BootIntro";
 import { CustomCursor } from "@/components/CustomCursor";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -105,6 +106,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
             <Footer profile={profile} />
           </div>
         </BootProvider>
+        <Analytics locale={lang} />
       </body>
     </html>
   );

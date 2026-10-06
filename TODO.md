@@ -10,6 +10,8 @@ Al completar un dato, bórralo de esta lista.
 - [ ] **MKDevSoft:** `mkdevsoft.netlify.app` da 404. Confirma la URL real del sitio. Mientras tanto, el link queda oculto.
 - [ ] **MKDevSoft (en su propio sitio):** el video del recorrido muestra "Desplegado en Vercel" en la terminal del hero de MKDevSoft. Si ese sitio está en Netlify, corrígelo allá.
 - [ ] **Rebuild diario:** crea el Build Hook en Netlify y guárdalo como secret `NETLIFY_BUILD_HOOK_URL` en GitHub (pasos en el README, sección "Rebuild diario").
+- [ ] **Analytics:** crea el sitio en Umami Cloud y define `NEXT_PUBLIC_UMAMI_WEBSITE_ID` en Netlify (pasos en el README). Elegí Umami porque no indicaste un servicio: no usa cookies y tiene plan gratuito. Si prefieres Plausible, se cambia en `lib/analytics.ts`.
+- [ ] **Google Search Console:** agrega la propiedad del sitio y envía `https://portafoliomarcolagunes.netlify.app/sitemap.xml`.
 - [ ] **Sonido de arranque (opcional):** el intro intentaba reproducir `/sounds/boot.mp3`, que nunca existió. Ahora el audio solo se activa si pones un archivo en `public/sounds/boot.mp3`.
 
 ## Datos personales (content/profile.es.ts)
