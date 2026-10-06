@@ -21,6 +21,12 @@ Al completar un dato, bórralo de esta lista.
 - [ ] **Métrica de liderazgo:** se calcula sola desde nov 2023. Hoy muestra "2+ años" y cambiará a "3+" en noviembre de 2026 con el rebuild diario. Si prefieres contar desde otra fecha, cambia `LEADERSHIP_SINCE` en `content/derived.ts`.
 - [ ] **"2 plataformas en producción":** confirma cuáles son (¿ASOMMMN + la app de Ultra Ingeniería?). Hoy UltraNube y MKDevSoft no responden.
 
+## Versión en inglés (content/profile.en.ts)
+
+- [ ] **Résumé en inglés:** sube `public/Marco_Lagunes_Resume.pdf`. Mientras no exista, el botón "Download résumé" de `/en` aparece deshabilitado con "PDF coming soon". Se activa solo en el siguiente build.
+- [ ] **Revisa la traducción** de tus logros y casos de estudio. Los `[COMPLETAR]` de `profile.en.ts` son los mismos que los de español: al completarlos, escríbelos en inglés.
+- [ ] **Nombre de ASOMMMN en inglés:** usé "National Merchant Marine Engineering Officers' Union". Ajústalo si la asociación usa otra traducción oficial.
+
 ## Casos de estudio (content/profile.es.ts → projects[].caseStudy)
 
 Revisa que las decisiones técnicas reflejen lo que realmente hiciste y completa:

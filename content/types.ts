@@ -161,10 +161,8 @@ export interface Profile {
   };
   cv: {
     href: string;
-    /** Nombre del archivo al descargar. */
+    /** Nombre del archivo al descargar. Si el PDF no existe en public/, el botón muestra un aviso. */
     fileName: string;
-    /** false = el PDF de este idioma aún no existe; el botón muestra un aviso. */
-    available: boolean;
   };
   nav: NavLink[];
   hero: {
@@ -261,6 +259,7 @@ export interface Profile {
       cvUnavailable: string;
     };
     footer: { role: string; rights: string };
+    notFound: { title: string; body: string; back: string };
     stackMarqueeLabel: string;
   };
 }

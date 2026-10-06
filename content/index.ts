@@ -1,16 +1,16 @@
+import { profileEn } from "./profile.en";
 import { profileEs } from "./profile.es";
+import { DEFAULT_LOCALE } from "./locales";
 import type { Locale, Profile } from "./types";
-
-export const LOCALES: Locale[] = ["es"];
-export const DEFAULT_LOCALE: Locale = "es";
 
 const profiles: Record<Locale, Profile> = {
   es: profileEs,
-  en: profileEs,
+  en: profileEn,
 };
 
 export function getProfile(locale: Locale = DEFAULT_LOCALE): Profile {
   return profiles[locale];
 }
 
-export type { Locale, Profile } from "./types";
+export * from "./locales";
+export type { Profile } from "./types";

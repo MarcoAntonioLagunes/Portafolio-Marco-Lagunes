@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
 import { CvButton } from "@/components/CvButton";
 import { HeroAvatar } from "@/components/HeroAvatar";
 import { ScrollCue } from "@/components/ScrollCue";
@@ -10,12 +8,9 @@ import { TerminalName } from "@/components/TerminalName";
 import { TypewriterText } from "@/components/TypewriterText";
 import { FloatingCodeBackground } from "@/components/FloatingCodeBackground";
 import type { Profile } from "@/content/types";
+import { publicFileExists } from "@/lib/public-files";
 
 const AVATAR_SRC = "/images/image.png";
-
-function hasAvatar() {
-  return fs.existsSync(path.join(process.cwd(), "public", AVATAR_SRC));
-}
 
 const secondaryButton =
   "flex items-center gap-2 rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:scale-[1.04] hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] motion-reduce:hover:scale-100";
@@ -91,7 +86,7 @@ export function Hero({ profile }: { profile: Profile }) {
         </div>
 
         <div className="flex justify-center md:justify-end">
-          <HeroAvatar src={hasAvatar() ? AVATAR_SRC : undefined} alt={hero.avatarAlt} />
+          <HeroAvatar src={publicFileExists(AVATAR_SRC) ? AVATAR_SRC : undefined} alt={hero.avatarAlt} />
         </div>
       </div>
 

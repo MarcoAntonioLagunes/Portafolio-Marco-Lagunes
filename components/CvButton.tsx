@@ -1,11 +1,12 @@
 import { Download } from "lucide-react";
 import type { Profile } from "@/content/types";
+import { publicFileExists } from "@/lib/public-files";
 import { cn } from "@/lib/utils";
 
 /** Botón de descarga del CV del idioma activo. Si el PDF aún no existe, se muestra deshabilitado con aviso. */
 export function CvButton({ profile, className }: { profile: Profile; className?: string }) {
   const { cv, hero, ui } = profile;
-  if (!cv.available) {
+  if (!publicFileExists(cv.href)) {
     return (
       <span aria-disabled="true" className={cn(className, "cursor-not-allowed opacity-60")}>
         <Download aria-hidden="true" className="h-4 w-4 text-accent" /> {hero.ctas.cv}

@@ -9,3 +9,7 @@ export const GITHUB_USER = "MarcoAntonioLagunes";
 export const GITHUB_URL = `https://github.com/${GITHUB_USER}`;
 
 export const CV_PATH = "/Marco_Lagunes_CV.pdf";
+export const RESUME_EN_PATH = "/Marco_Lagunes_Resume.pdf";
+
+/** Sonido opcional del intro. Solo se usa si el archivo existe en public/ al hacer build. */
+export const BOOT_SOUND_PATH = "/sounds/boot.mp3";

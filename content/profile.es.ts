@@ -54,7 +54,6 @@ export const profileEs: Profile = {
   cv: {
     href: CV_PATH,
     fileName: "Marco_Lagunes_CV.pdf",
-    available: true,
   },
   nav: [
     { label: "Sobre mí", href: "#sobre-mi" },
@@ -501,6 +500,7 @@ export const profileEs: Profile = {
       cvUnavailable: "PDF en preparación",
     },
     footer: { role: ">_ Full-Stack Developer", rights: "Todos los derechos reservados." },
+    notFound: { title: "Página no encontrada", body: "La ruta que buscas no existe o cambió de lugar.", back: "Volver al inicio" },
     stackMarqueeLabel: "Tecnologías",
   },
 };
