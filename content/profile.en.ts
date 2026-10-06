@@ -486,6 +486,7 @@ export const profileEn: Profile = {
       languages: "Languages",
       links: "Links",
     },
+    boot: { skip: "press any key to skip", soundOn: "Turn on intro sound", soundOff: "Mute intro sound" },
     notFound: { title: "Page not found", body: "The page you are looking for does not exist or has moved.", back: "Back to home" },
     stackMarqueeLabel: "Technologies",
   },

@@ -30,7 +30,7 @@ export function Hero({ profile }: { profile: Profile }) {
       </div>
 
       <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 px-6 py-12 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-20 md:py-16">
-        <div className="flex animate-fade-in-up flex-col items-center text-center md:items-start md:text-left">
+        <div className="flex animate-rise flex-col items-center text-center md:items-start md:text-left">
           <p className="inline-flex items-center gap-2 rounded-full border border-mint/40 bg-mint/10 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-mint">
             <span aria-hidden="true" className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mint opacity-60 [animation-duration:2.4s] motion-reduce:animate-none" />

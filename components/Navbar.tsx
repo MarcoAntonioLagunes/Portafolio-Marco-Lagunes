@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "@/components/MobileMenu";
@@ -23,13 +22,11 @@ export function Navbar({
 }: {
   links: NavLink[];
   strings: NavbarStrings;
-  /** Ruta del home. Fuera del home, las anclas se prefijan con ella (p. ej. "/#proyectos"). */
+  /** Ruta del home. Fuera del home, las anclas se prefijan con ella (p. ej. "/es#proyectos"). */
   homePath?: string;
-  /** Controles extra a la derecha (p. ej. selector de idioma), renderizados en el servidor. */
+  /** Controles extra a la derecha (p. ej. selector de idioma). */
   actions?: React.ReactNode;
 }) {
-  const { scrollY } = useScroll();
-  const reduced = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
@@ -38,9 +35,13 @@ export function Navbar({
   const isHome = pathname === homePath || pathname === `${homePath}/`;
   const resolvedLinks = isHome ? links : links.map((link) => ({ ...link, href: `${homePath}${link.href}` }));
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 50);
-  });
+  // Fondo del navbar al hacer scroll: listener pasivo; React descarta el setState si el valor no cambia.
+  useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 50);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("main section[id]"));
@@ -75,8 +76,7 @@ export function Navbar({
 
         <ul className="hidden items-center gap-6 lg:flex">
           {resolvedLinks.map((link) => {
-            const id = link.href.split("#")[1];
-            const isActive = activeId === id;
+            const isActive = activeId === link.href.split("#")[1];
             return (
               <li key={link.href} className="relative py-2">
                 <a
@@ -89,14 +89,13 @@ export function Navbar({
                 >
                   {link.label}
                 </a>
-                {isActive && (
-                  <motion.span
-                    layoutId="navbar-active-indicator"
-                    aria-hidden="true"
-                    className="absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-accent"
-                    transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute -bottom-1 left-0 h-[2px] w-full origin-left rounded-full bg-accent transition-transform duration-300 motion-reduce:transition-none",
+                    isActive ? "scale-x-100" : "scale-x-0",
+                  )}
+                />
               </li>
             );
           })}

@@ -260,6 +260,7 @@ export interface Profile {
     };
     footer: { role: string; rights: string };
     notFound: { title: string; body: string; back: string };
+    boot: { skip: string; soundOn: string; soundOff: string };
     cv: { title: string; print: string; hint: string; summary: string; skills: string; languages: string; links: string };
     stackMarqueeLabel: string;
   };

@@ -137,7 +137,6 @@
     font-family: var(--font-jetbrains-mono), monospace;
     line-height: 1.5;
     white-space: nowrap;
-    filter: blur(0.45px);
     opacity: 0.13;
     animation: floating-code-drift 24s ease-in-out infinite alternate;
   }
@@ -152,7 +151,22 @@
 
   .floating-code-subtle {
     opacity: 0.07;
-    filter: blur(0.8px);
+  }
+
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    background: hsl(var(--navy));
+    color: hsl(var(--accent));
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .logo-mark::before {
+    content: "ML";
   }
 
   /* Nombre gigante con barrido de gradiente en el footer (antes en styled-jsx). */
@@ -210,6 +224,40 @@
   body[data-cursor-visible] .custom-cursor-ring.is-hovering {
     opacity: 0.35;
     scale: 1.5;
+  }
+
+  /* Pantalla de arranque (BootIntro). */
+  .boot-overlay {
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out, filter 0.6s ease-out;
+  }
+
+  .boot-leaving {
+    opacity: 0;
+    transform: scale(1.08);
+    filter: blur(14px);
+    pointer-events: none;
+  }
+
+  .boot-logo {
+    animation: boot-logo-in 0.6s ease-out both;
+  }
+
+  .boot-progress {
+    animation: boot-progress 1.7s ease-in-out both;
+  }
+
+  /* Tilt 3D de las tarjetas de proyecto (ProjectCard escribe --tilt-x/--tilt-y con el mouse). */
+  .project-card {
+    transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(var(--lift, 0));
+    transition: transform 200ms ease-out, box-shadow 300ms, border-color 300ms;
+  }
+
+  .project-card:hover {
+    --lift: -6px;
+  }
+
+  .gallery-slide {
+    animation: gallery-fade-in 0.25s ease-out both;
   }
 
   /* Tecleo del nombre (TerminalName): el texto existe en SSR, solo se anima la visibilidad. */
@@ -342,6 +390,39 @@
 }
 
 /*
+ * Las secciones bajo el hero no se maquetan ni pintan hasta acercarse al viewport:
+ * reduce a la mitad el layout inicial en mobile. contain-intrinsic-size evita saltos del scroll.
+ */
+main#top > section:not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+@media print {
+  main#top > section {
+    content-visibility: visible;
+  }
+}
+
+/* Barra de progreso de lectura (ScrollProgress): ligada al scroll del documento, sin JS. */
+.scroll-progress {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    display: block;
+    transform: scaleX(0);
+    animation: scroll-progress-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes scroll-progress-grow {
+  to { transform: scaleX(1); }
+}
+
+/*
  * Revelado al hacer scroll, sin JS: animación ligada a la vista (scroll-driven animations).
  * Mejora progresiva: si el navegador no la soporta o hay reduced-motion, el contenido se ve directo.
  * Así el HTML SSR nunca queda con opacity:0.
@@ -366,6 +447,21 @@
   45% { background-position: 0% 0; opacity: 0.22; }
   65% { background-position: -10% 0; opacity: 0.22; }
   100% { background-position: -120% 0; opacity: 0.18; }
+}
+
+@keyframes boot-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes boot-logo-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes gallery-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes type-char-in {
@@ -397,8 +493,10 @@
 
   .animate-marquee,
   .animate-fade-in-up,
+  .animate-rise,
   .type-char,
-  .word-reveal {
+  .word-reveal,
+  .gallery-slide {
     animation: none !important;
   }
 
@@ -409,6 +507,18 @@
   .skill-chip,
   .skill-chip-icon {
     transition: none;
+  }
+
+  /* Duraciones mínimas (no "none"): animationend/transitionend deben dispararse para cerrar el intro. */
+  .boot-progress { animation-duration: 1ms !important; }
+  .boot-logo { animation: none !important; }
+  .boot-overlay { transition: opacity 0.2s linear; }
+  .boot-leaving { transform: none; filter: none; }
+
+  .project-card,
+  .project-card:hover {
+    --lift: 0;
+    transform: none;
   }
 
   .avatar-ring-conic,
@@ -426,10 +536,9 @@
   .marquee-list { flex-wrap: wrap; justify-content: center; padding-right: 0; }
 }
 
+/* En mobile el fondo de código casi no se ve y su costo de estilo/animación retrasa el LCP: se omite. */
 @media (max-width: 639px) {
-  .floating-code:nth-child(n + 7) { display: none; }
-  .floating-code { opacity: 0.075; filter: blur(0.65px); animation-duration: 32s !important; }
-  .floating-code-subtle { opacity: 0.045; }
+  .floating-code-layer { display: none; }
 }
 
 /* CV imprimible (/es/cv, /en/cv): solo la hoja, sin navegación ni decoraciones. */

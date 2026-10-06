@@ -24,7 +24,8 @@ export function FloatingCodeBackground({ density = "medium", opacity = "soft", v
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    // En mobile la capa está oculta por CSS: ni se observa ni se montan los fragmentos.
+    if (!el || !window.matchMedia("(min-width: 640px)").matches) return;
     let idleId: number | undefined;
     const observer = new IntersectionObserver(([entry]) => {
       setInView(entry.isIntersecting);

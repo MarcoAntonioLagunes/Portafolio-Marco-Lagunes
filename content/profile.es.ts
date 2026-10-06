@@ -509,6 +509,7 @@ export const profileEs: Profile = {
       languages: "Idiomas",
       links: "Enlaces",
     },
+    boot: { skip: "presiona cualquier tecla para omitir", soundOn: "Activar sonido de inicio", soundOff: "Silenciar sonido de inicio" },
     notFound: { title: "Página no encontrada", body: "La ruta que buscas no existe o cambió de lugar.", back: "Volver al inicio" },
     stackMarqueeLabel: "Tecnologías",
   },

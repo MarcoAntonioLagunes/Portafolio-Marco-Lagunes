@@ -45,6 +45,11 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(24px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        // Entrada sin opacidad: el texto cuenta como pintado desde el primer frame (no retrasa el LCP).
+        rise: {
+          "0%": { transform: "translateY(16px)" },
+          "100%": { transform: "translateY(0)" },
+        },
         marquee: {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
@@ -57,6 +62,7 @@ const config: Config = {
       animation: {
         "pulse-slow": "pulse 3s ease-in-out infinite",
         "fade-in-up": "fade-in-up 0.6s ease-out both",
+        rise: "rise 0.6s ease-out both",
         marquee: "marquee 26s linear infinite",
         "float-y": "float-y 4s ease-in-out infinite",
         "blob-drift": "blob-drift 16s ease-in-out infinite",

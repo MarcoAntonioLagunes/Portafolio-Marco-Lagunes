@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { GalleryItem, GalleryVideoItem } from "@/content/types";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 export interface GalleryStrings {
   galleryLabel: string;
@@ -90,7 +90,16 @@ export function ProjectGallery({
   const [index, setIndex] = useState(0);
   const reduced = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(containerRef, { margin: "-80px" });
+  const [inView, setInView] = useState(false);
+
+  // El video solo se reproduce mientras la galería está en pantalla.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { rootMargin: "-80px" });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   if (items.length === 0) return null;
 
@@ -102,28 +111,14 @@ export function ProjectGallery({
       <BrowserChrome mockUrl={mockUrl} />
 
       <div className="group/gallery relative aspect-video overflow-hidden rounded-b-lg border border-border bg-navy">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={index}
-            initial={reduced ? undefined : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reduced ? undefined : { opacity: 0 }}
-            transition={{ duration: reduced ? 0 : 0.25, ease: "easeOut" }}
-            className="absolute inset-0"
-          >
-            {current.type === "image" ? (
-              <Image
-                src={current.src}
-                alt={current.alt}
-                fill
-                sizes={sizes}
-                className="object-cover"
-              />
-            ) : (
-              <GallerySlideVideo item={current} active={inView} reduced={!!reduced} />
-            )}
-          </motion.div>
-        </AnimatePresence>
+        {/* key = índice: cada cambio de diapositiva remonta el contenedor y dispara el fade CSS. */}
+        <div key={index} className="gallery-slide absolute inset-0">
+          {current.type === "image" ? (
+            <Image src={current.src} alt={current.alt} fill sizes={sizes} className="object-cover" />
+          ) : (
+            <GallerySlideVideo item={current} active={inView} reduced={reduced} />
+          )}
+        </div>
 
         {items.length > 1 && (
           <>
@@ -149,7 +144,7 @@ export function ProjectGallery({
 
       {items.length > 1 && (
         <div
-          className="mt-2.5 flex justify-center gap-1.5"
+          className="mt-1.5 flex justify-center"
           role="group"
           aria-label={`${strings.galleryLabel} ${projectTitle}`}
         >
@@ -160,10 +155,15 @@ export function ProjectGallery({
               aria-current={i === index ? "true" : undefined}
               aria-label={`${strings.goToSlide} ${i + 1} / ${items.length}`}
               onClick={() => goTo(i)}
-              className={`relative h-1.5 rounded-full transition-all duration-200 before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[""] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                i === index ? "w-4 bg-accent" : "w-1.5 bg-border hover:bg-muted-foreground"
-              }`}
-            />
+              className="group/dot flex h-6 w-6 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <span
+                aria-hidden="true"
+                className={`h-1.5 rounded-full transition-all duration-200 ${
+                  i === index ? "w-4 bg-accent" : "w-1.5 bg-border group-hover/dot:bg-muted-foreground"
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { BootProvider } from "@/lib/boot-context";
 import { Analytics } from "@/components/Analytics";
 import { BootIntro } from "@/components/BootIntro";
 import { CustomCursor } from "@/components/CustomCursor";
@@ -86,26 +85,24 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         >
           {profile.ui.skipToContent}
         </a>
-        <BootProvider>
-          <CustomCursor />
-          <ScrollProgress />
+        <CustomCursor />
+        <ScrollProgress />
 
-          <div className="relative z-10 flex min-h-screen flex-col">
-            <BootIntro soundSrc={publicFileExists(BOOT_SOUND_PATH) ? BOOT_SOUND_PATH : undefined} />
-            <Navbar
-              links={profile.nav}
-              strings={profile.ui}
-              homePath={homePath(lang)}
-              actions={<LanguageToggle current={lang} target={other} label={profile.ui.switchLanguage} />}
-            />
+        <div className="relative z-10 flex min-h-screen flex-col">
+          <BootIntro soundSrc={publicFileExists(BOOT_SOUND_PATH) ? BOOT_SOUND_PATH : undefined} strings={profile.ui.boot} />
+          <Navbar
+            links={profile.nav}
+            strings={profile.ui}
+            homePath={homePath(lang)}
+            actions={<LanguageToggle current={lang} target={other} label={profile.ui.switchLanguage} />}
+          />
 
-            <div id="contenido" className="relative flex-1">
-              {children}
-            </div>
-
-            <Footer profile={profile} />
+          <div id="contenido" className="relative flex-1">
+            {children}
           </div>
-        </BootProvider>
+
+          <Footer profile={profile} />
+        </div>
         <Analytics locale={lang} />
       </body>
     </html>
