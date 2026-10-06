@@ -431,3 +431,32 @@
   .floating-code { opacity: 0.075; filter: blur(0.65px); animation-duration: 32s !important; }
   .floating-code-subtle { opacity: 0.045; }
 }
+
+/* CV imprimible (/es/cv, /en/cv): solo la hoja, sin navegación ni decoraciones. */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.55in 0.6in;
+  }
+
+  /* El sitio declara color-scheme: dark; sin esto Chrome pinta oscuros los márgenes de la página. */
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  body::before,
+  .no-print,
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none !important;
+  }
+
+  .cv-page a {
+    color: inherit;
+  }
+}

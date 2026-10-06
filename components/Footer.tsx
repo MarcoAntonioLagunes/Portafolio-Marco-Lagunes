@@ -7,7 +7,7 @@ export function Footer({ profile }: { profile: Profile }) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative w-full overflow-hidden border-t border-white/5 bg-[#06090F]">
+    <footer className="relative w-full overflow-hidden border-t border-white/5 bg-[#06090F] print:hidden">
       {/* Texto grande animado al fondo (decorativo) */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex select-none items-center justify-center">
         <span className="footer-sweep-name whitespace-nowrap font-bold tracking-tight">{person.name}</span>

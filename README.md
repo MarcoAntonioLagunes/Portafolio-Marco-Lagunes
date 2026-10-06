@@ -35,6 +35,14 @@ Agrega un objeto a `projects` en el perfil, con un `slug` único. Con eso se gen
 - su imagen OG,
 - su diagrama de arquitectura (a partir de `caseStudy.architecture`).
 
+### CV imprimible
+
+`/es/cv` y `/en/cv` generan el CV desde el perfil, en una columna compatible con ATS y con links clicables. Para actualizar el PDF, abre la ruta en Chrome, usa *Imprimir → Guardar como PDF* y reemplaza:
+- `public/Marco_Lagunes_CV.pdf` (versión en español)
+- `public/Marco_Lagunes_Resume.pdf` (versión en inglés)
+
+Más detalles en `docs/cv-fixes.md`.
+
 ## Formulario de contacto (Netlify Forms)
 
 - `public/__forms.html` contiene el formulario estático que Netlify detecta en el build. Sus campos deben coincidir con `components/ContactForm.tsx`.

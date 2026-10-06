@@ -23,6 +23,12 @@ Al completar un dato, bórralo de esta lista.
 - [ ] **Métrica de liderazgo:** se calcula sola desde nov 2023. Hoy muestra "2+ años" y cambiará a "3+" en noviembre de 2026 con el rebuild diario. Si prefieres contar desde otra fecha, cambia `LEADERSHIP_SINCE` en `content/derived.ts`.
 - [ ] **"2 plataformas en producción":** confirma cuáles son (¿ASOMMMN + la app de Ultra Ingeniería?). Hoy UltraNube y MKDevSoft no responden.
 
+## CV y GitHub (docs/)
+
+- [ ] Aplica las correcciones de `docs/cv-fixes.md` a tu CV, o genera el PDF desde `/es/cv`.
+- [ ] Crea el README de perfil de GitHub con `docs/github-profile-README.md` (repo `MarcoAntonioLagunes/MarcoAntonioLagunes`).
+- [ ] Aplica `docs/repo-readme-template.md` a los repos fijados y limpia los repos con descripción "blablabla".
+
 ## Versión en inglés (content/profile.en.ts)
 
 - [ ] **Résumé en inglés:** sube `public/Marco_Lagunes_Resume.pdf`. Mientras no exista, el botón "Download résumé" de `/en` aparece deshabilitado con "PDF coming soon". Se activa solo en el siguiente build.
