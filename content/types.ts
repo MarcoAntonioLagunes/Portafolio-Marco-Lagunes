@@ -221,6 +221,8 @@ export interface Profile {
       opensInNewTab: string;
     };
     caseStudy: {
+      /** "Caso de estudio": sufijo de títulos y metadatos. */
+      label: string;
       back: string;
       problem: string;
       role: string;

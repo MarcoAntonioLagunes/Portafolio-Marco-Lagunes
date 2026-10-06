@@ -453,6 +453,7 @@ export const profileEs: Profile = {
       opensInNewTab: "(se abre en una pestaña nueva)",
     },
     caseStudy: {
+      label: "Caso de estudio",
       back: "Volver a proyectos",
       problem: "Problema",
       role: "Mi rol",

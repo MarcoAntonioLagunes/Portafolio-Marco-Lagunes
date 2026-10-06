@@ -1,4 +1,5 @@
-import { Hammer } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Hammer } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ProjectCard } from "@/components/ProjectCard";
 import { FloatingCodeBackground } from "@/components/FloatingCodeBackground";
@@ -29,7 +30,7 @@ function UpcomingProjectCard({ project, badge, etaLabel }: { project: UpcomingPr
   );
 }
 
-export function Projects({ profile }: { profile: Profile }) {
+export function Projects({ profile, projectPath }: { profile: Profile; projectPath: (slug: string) => string }) {
   const { projects, upcomingProject, ui } = profile;
   return (
     <section id="proyectos" aria-labelledby="proyectos-title" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border bg-surface2/40 py-24">
@@ -43,7 +44,16 @@ export function Projects({ profile }: { profile: Profile }) {
               key={project.slug}
               project={project}
               strings={{ ...ui.projects, status: ui.projects.status[project.status] }}
-            />
+            >
+              <Link
+                href={projectPath(project.slug)}
+                className="group/cs mt-5 inline-flex items-center gap-2 rounded-full bg-accent/15 px-4 py-2 text-sm font-medium text-lavender transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {ui.projects.caseStudy}
+                <span className="sr-only">: {project.title}</span>
+                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover/cs:translate-x-0.5 motion-reduce:transition-none" />
+              </Link>
+            </ProjectCard>
           ))}
           {upcomingProject && (
             <UpcomingProjectCard project={upcomingProject} badge={ui.projects.upcomingBadge} etaLabel={ui.projects.upcomingEta} />

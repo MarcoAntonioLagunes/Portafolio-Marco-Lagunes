@@ -14,7 +14,7 @@ export default function Home() {
     <main id="top" className="flex-1">
       <Hero profile={profile} />
       <Experience profile={profile} />
-      <Projects profile={profile} />
+      <Projects profile={profile} projectPath={(slug) => `/proyectos/${slug}`} />
       <Education profile={profile} />
       <Certifications profile={profile} />
       <Skills profile={profile} />

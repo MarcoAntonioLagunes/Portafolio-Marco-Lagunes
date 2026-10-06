@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Logo } from "@/components/Logo";
@@ -17,13 +18,13 @@ export interface NavbarStrings {
 export function Navbar({
   links,
   strings,
-  homeHref = "#top",
+  homePath = "/",
   actions,
 }: {
   links: NavLink[];
   strings: NavbarStrings;
-  /** En páginas internas las anclas apuntan al home (p. ej. "/#proyectos"). */
-  homeHref?: string;
+  /** Ruta del home. Fuera del home, las anclas se prefijan con ella (p. ej. "/#proyectos"). */
+  homePath?: string;
   /** Controles extra a la derecha (p. ej. selector de idioma), renderizados en el servidor. */
   actions?: React.ReactNode;
 }) {
@@ -33,6 +34,9 @@ export function Navbar({
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
+  const isHome = pathname === homePath || pathname === `${homePath}/`;
+  const resolvedLinks = isHome ? links : links.map((link) => ({ ...link, href: `${homePath}${link.href}` }));
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 50);
@@ -40,7 +44,7 @@ export function Navbar({
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("main section[id]"));
-    if (sections.length === 0) return;
+    if (!isHome || sections.length === 0) return;
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((entry) => entry.isIntersecting);
@@ -50,7 +54,7 @@ export function Navbar({
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [isHome]);
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
@@ -65,12 +69,12 @@ export function Navbar({
       )}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
-        <a href={homeHref} className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={strings.goHome}>
+        <a href={isHome ? "#top" : homePath} className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={strings.goHome}>
           <Logo className="h-8 w-8" decorative />
         </a>
 
         <ul className="hidden items-center gap-6 lg:flex">
-          {links.map((link) => {
+          {resolvedLinks.map((link) => {
             const id = link.href.split("#")[1];
             const isActive = activeId === id;
             return (
@@ -114,7 +118,7 @@ export function Navbar({
         </div>
       </nav>
 
-      <MobileMenu open={menuOpen} links={links} activeId={activeId} closeLabel={strings.closeMenu} onClose={closeMenu} />
+      <MobileMenu open={menuOpen} links={resolvedLinks} activeId={activeId} closeLabel={strings.closeMenu} onClose={closeMenu} />
     </header>
   );
 }
