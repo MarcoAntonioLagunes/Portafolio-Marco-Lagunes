@@ -1,0 +1,25 @@
+# Rebuild diario del sitio en Netlify: refresca los repos de GitHub ("Ahora mismo")
+# y los valores calculados en build (p. ej. años de liderazgo).
+# Requiere el secret NETLIFY_BUILD_HOOK_URL (ver README → "Rebuild diario").
+name: Rebuild diario en Netlify
+
+on:
+  schedule:
+    - cron: "0 12 * * *" # 12:00 UTC = 06:00 en Veracruz (CST)
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  trigger-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disparar Netlify Build Hook
+        env:
+          HOOK: ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::warning::Falta el secret NETLIFY_BUILD_HOOK_URL; no se dispara el build."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST -d '{}' "$HOOK?trigger_title=rebuild+diario+(GitHub+Actions)"

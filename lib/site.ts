@@ -5,6 +5,7 @@ export const SITE_URL = "https://portafoliomarcolagunes.netlify.app";
 export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "");
 
 export const LINKEDIN_URL = "https://linkedin.com/in/marco-lagunes";
-export const GITHUB_URL = "https://github.com/MarcoAntonioLagunes";
+export const GITHUB_USER = "MarcoAntonioLagunes";
+export const GITHUB_URL = `https://github.com/${GITHUB_USER}`;
 
 export const CV_PATH = "/Marco_Lagunes_CV.pdf";

@@ -9,6 +9,7 @@ Al completar un dato, bórralo de esta lista.
 - [ ] **UltraNube:** `ultranube.com.mx` no resuelve DNS (dominio vencido o sin registro A). Renueva o configura el dominio, o dame la URL nueva. Mientras tanto, el link del proyecto queda oculto.
 - [ ] **MKDevSoft:** `mkdevsoft.netlify.app` da 404. Confirma la URL real del sitio. Mientras tanto, el link queda oculto.
 - [ ] **MKDevSoft (en su propio sitio):** el video del recorrido muestra "Desplegado en Vercel" en la terminal del hero de MKDevSoft. Si ese sitio está en Netlify, corrígelo allá.
+- [ ] **Rebuild diario:** crea el Build Hook en Netlify y guárdalo como secret `NETLIFY_BUILD_HOOK_URL` en GitHub (pasos en el README, sección "Rebuild diario").
 - [ ] **Sonido de arranque (opcional):** el intro intentaba reproducir `/sounds/boot.mp3`, que nunca existió. Ahora el audio solo se activa si pones un archivo en `public/sounds/boot.mp3`.
 
 ## Datos personales (content/profile.es.ts)
@@ -26,4 +27,4 @@ Revisa que las decisiones técnicas reflejen lo que realmente hiciste y completa
 - [ ] ASOMMMN: proveedor o modelo del asistente IA, dónde corre la API, hash de contraseñas, expiración de tokens, validación de archivos, y métricas de impacto (aspirantes y evaluaciones procesadas, tiempo antes vs. después).
 - [ ] UltraNube: para quién es y qué problema resuelve, proveedor cloud, detalles de seguridad e impacto.
 - [ ] MKDevSoft: servicio de formularios, protección anti-spam y clientes o solicitudes recibidas.
-- [ ] Repos públicos: si alguno de los 3 proyectos tiene repo público, agrega `repoUrl`.
+- [ ] **Repos públicos:** `ASOMMMN-APP-WEB`, `UltraNube`, `ultranube-backend` y `mkdevsoft` son públicos y ya están enlazados en los casos de estudio. Revisa que el repo de ASOMMMN no tenga secretos (`.env`, llaves, datos de aspirantes) y que la asociación esté de acuerdo con que el código sea público. Si no, hazlo privado y borra su `repoUrl`.

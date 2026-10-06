@@ -61,6 +61,7 @@ export const profileEs: Profile = {
     { label: "Experiencia", href: "#experiencia" },
     { label: "Proyectos", href: "#proyectos" },
     { label: "Educación", href: "#educacion" },
+    { label: "Ahora", href: "#ahora" },
     { label: "Certificaciones", href: "#certificaciones" },
     { label: "Stack", href: "#stack" },
     { label: "Contacto", href: "#contacto" },
@@ -148,6 +149,7 @@ export const profileEs: Profile = {
       status: "production",
       stack: ["React", "Node.js", "MongoDB", "JWT", "REST API"],
       demoUrl: "https://reclutamiento-asommmn.netlify.app/",
+      repoUrl: `${GITHUB_URL}/ASOMMMN-APP-WEB`,
       mockUrl: "reclutamiento-asommmn.netlify.app",
       gallery: [
         {
@@ -246,6 +248,7 @@ export const profileEs: Profile = {
         "Aplicación cliente-servidor con autenticación JWT, REST APIs y MongoDB, desplegada en la nube con seguridad integrada de principio a fin y accesible desde web y móvil. Incluye agentes de IA para presentaciones y traducción.",
       status: "personal",
       stack: ["React", "Node.js", "MongoDB", "JWT", "Cloud"],
+      repoUrl: `${GITHUB_URL}/UltraNube`,
       mockUrl: "ultranube.com.mx",
       gallery: [
         { type: "image", src: "/images/ultranube/dashboard.png", alt: "Panel principal del dashboard de UltraNube con métricas de uso" },
@@ -308,6 +311,7 @@ export const profileEs: Profile = {
         "Sitio institucional y de captación de clientes para mi iniciativa de desarrollo de software, dirigida a pequeñas y medianas empresas de Veracruz y Boca del Río: showcase de plantillas, servicios y formulario de contacto.",
       status: "personal",
       stack: ["Next.js", "Tailwind CSS", "Framer Motion", "Netlify"],
+      repoUrl: `${GITHUB_URL}/mkdevsoft`,
       mockUrl: "mkdevsoft.netlify.app",
       gallery: [
         {
