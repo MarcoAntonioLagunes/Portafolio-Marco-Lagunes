@@ -1,8 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { Download } from "lucide-react";
-import { heroStats, socialLinks } from "@/lib/data";
-import { CV_PATH } from "@/lib/site";
+import { CvButton } from "@/components/CvButton";
 import { HeroAvatar } from "@/components/HeroAvatar";
 import { ScrollCue } from "@/components/ScrollCue";
 import { SocialIcon } from "@/components/SocialIcon";
@@ -11,142 +9,102 @@ import { TerminalHero } from "@/components/TerminalHero";
 import { TerminalName } from "@/components/TerminalName";
 import { TypewriterText } from "@/components/TypewriterText";
 import { FloatingCodeBackground } from "@/components/FloatingCodeBackground";
+import type { Profile } from "@/content/types";
+
+const AVATAR_SRC = "/images/image.png";
 
 function hasAvatar() {
-  return fs.existsSync(
-    path.join(process.cwd(), "public", "images", "image.png")
-  );
+  return fs.existsSync(path.join(process.cwd(), "public", AVATAR_SRC));
 }
 
-export function Hero() {
-  const avatarExists = hasAvatar();
+const secondaryButton =
+  "flex items-center gap-2 rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:scale-[1.04] hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] motion-reduce:hover:scale-100";
+
+export function Hero({ profile }: { profile: Profile }) {
+  const { person, hero, metrics, socials } = profile;
 
   return (
-    <section
-      id="sobre-mi"
-      className="relative isolate flex min-h-screen flex-col overflow-hidden pb-12 pt-24 md:pb-64"
-    >
+    <section id="sobre-mi" className="relative isolate flex min-h-screen flex-col overflow-hidden pb-12 pt-24 md:pb-64">
       {/* Fondo decorativo */}
-      <div className="pointer-events-none absolute inset-0 bg-grid-glow" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-grid-glow" />
       <FloatingCodeBackground density="high" variant="hero" />
-
-      {/* Blobs de luz difusa */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className="hero-blob -left-24 -top-16 h-72 w-72 animate-blob-drift bg-accent/25 sm:h-96 sm:w-96" />
         <div className="hero-blob -right-32 top-1/3 h-64 w-64 animate-blob-drift-slow bg-mint/15 sm:h-80 sm:w-80" />
         <div className="hero-blob bottom-[-6rem] left-1/4 h-56 w-56 animate-blob-drift bg-lavender/15" />
       </div>
 
-      {/* Contenido principal */}
       <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 px-6 py-12 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-20 md:py-16">
-        {/* Información */}
         <div className="flex animate-fade-in-up flex-col items-center text-center md:items-start md:text-left">
-          <p className="font-mono text-xs uppercase tracking-widest text-accent">
-            Desarrollador Full-Stack
+          <p className="inline-flex items-center gap-2 rounded-full border border-mint/40 bg-mint/10 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-mint">
+            <span aria-hidden="true" className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mint opacity-60 [animation-duration:2.4s] motion-reduce:animate-none" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-mint" />
+            </span>
+            {hero.badge}
           </p>
 
-          <TerminalName
-            text="Marco Lagunes"
-            className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl"
-          />
+          <TerminalName text={person.name} className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl" />
 
-          <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-            Arquitectura de Software · Aplicaciones Web · Ciberseguridad
-            Aplicada
-          </p>
+          <p className="mt-3 max-w-xl font-mono text-xs uppercase tracking-widest text-accent sm:text-sm">{hero.subtitle}</p>
 
-          <TypewriterText
-            text="Construyendo software seguro y listo para producción, de principio a fin."
-            className="mt-6 max-w-xl text-lg font-medium text-foreground sm:text-xl"
-          />
+          <TypewriterText text={hero.headline} className="mt-6 max-w-xl text-lg font-medium text-foreground sm:text-xl" />
 
-          <p className="mt-6 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Ingeniero en Sistemas Computacionales y desarrollador full-stack
-            certificado en Cisco CCST Cybersecurity. Diseño y despliego
-            aplicaciones web completas — frontend, backend, bases de datos,
-            APIs y autenticación — con foco en seguridad desde el diseño.
-            Actualmente construyo una plataforma en producción, usada por evaluadores reales de
-            una asociación nacional de oficiales de marina mercante.
-          </p>
+          <p className="mt-6 max-w-xl text-sm leading-relaxed text-muted-foreground">{hero.summary}</p>
 
-          {/* Botones */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4 md:justify-start">
             <a
               href="#proyectos"
-              className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-300 hover:scale-[1.04] hover:bg-accent/90 hover:shadow-[0_0_24px_-2px_hsl(var(--accent)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98]"
+              className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-300 hover:scale-[1.04] hover:bg-accent/90 hover:shadow-[0_0_24px_-2px_hsl(var(--accent)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] motion-reduce:hover:scale-100"
             >
-              Ver proyectos
+              {hero.ctas.projects}
             </a>
-
-            <a
-              href="#contacto"
-              className="rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:scale-[1.04] hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98]"
-            >
-              Contactarme
-            </a>
-
-            <a
-              href={CV_PATH}
-              download
-              className="flex items-center gap-2 rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:scale-[1.04] hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98]"
-            >
-              <Download className="h-4 w-4 text-accent" /> Descargar CV
+            <CvButton profile={profile} className={secondaryButton} />
+            <a href="#contacto" className={secondaryButton}>
+              {hero.ctas.contact}
             </a>
           </div>
 
-          {/* Redes sociales */}
-          <div className="mt-8 flex items-center justify-center gap-5 md:justify-start">
-            {socialLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                aria-label={link.label}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={
-                  link.href.startsWith("http")
-                    ? "noopener noreferrer"
-                    : undefined
-                }
-                className="rounded-sm text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                <SocialIcon icon={link.icon} className="h-5 w-5" />
-              </a>
-            ))}
-          </div>
+          <ul className="mt-8 flex items-center justify-center gap-3 md:justify-start">
+            {socials.map((link) => {
+              const external = link.href.startsWith("http");
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    aria-label={link.label}
+                    data-event={link.event}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <SocialIcon icon={link.icon} className="h-5 w-5" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
 
-          {/* Terminal interactiva */}
           <div className="mt-10 flex w-full justify-center md:justify-start">
-            <TerminalHero />
+            <TerminalHero lines={hero.terminal} title={hero.terminalTitle} />
           </div>
         </div>
 
-        {/* Fotografía */}
         <div className="flex justify-center md:justify-end">
-          <HeroAvatar avatarExists={avatarExists} />
+          <HeroAvatar src={hasAvatar() ? AVATAR_SRC : undefined} alt={hero.avatarAlt} />
         </div>
       </div>
 
-      {/* Indicador de desplazamiento */}
-      <ScrollCue className="absolute inset-x-0 bottom-48 hidden text-center md:block" />
+      <ScrollCue label={hero.scrollCue} className="absolute inset-x-0 bottom-48 hidden text-center md:block" />
 
-      {/* Estadísticas */}
       <div className="relative z-10 mt-12 border-y border-border bg-surface2/70 py-2 backdrop-blur-sm md:absolute md:inset-x-0 md:bottom-0 md:mt-0">
-        <div className="mx-auto grid w-full max-w-5xl grid-cols-2 px-6 sm:grid-cols-4">
-          {heroStats.map((stat, index) => (
-            <div
-              key={stat.label}
-              className={
-                index % 2 === 1
-                  ? "border-l border-border"
-                  : index === 2
-                    ? "sm:border-l sm:border-border"
-                    : undefined
-              }
-            >
+        <ul className="mx-auto grid w-full max-w-4xl grid-cols-3 divide-x divide-border px-6">
+          {metrics.map((stat) => (
+            <li key={stat.label}>
               <StatCounter value={stat.value} label={stat.label} />
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );

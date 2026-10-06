@@ -1,25 +1,20 @@
 import { SectionHeading } from "@/components/SectionHeading";
 import { TimelineItem } from "@/components/TimelineItem";
 import { ParticleBackground } from "@/components/ParticleBackground";
-import { experience } from "@/lib/data";
+import type { Profile } from "@/content/types";
 
-export function Experience() {
+export function Experience({ profile }: { profile: Profile }) {
+  const { experience, ui } = profile;
   return (
-    <section id="experiencia" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border py-24">
+    <section id="experiencia" aria-labelledby="experiencia-title" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border py-24">
       <ParticleBackground density="medium" />
       <div className="relative z-10 mx-auto max-w-3xl px-6">
-        <SectionHeading eyebrow="experiencia" title="Trayectoria profesional" />
-
-        <ul>
+        <SectionHeading id="experiencia-title" {...ui.sections.experience} />
+        <ol>
           {experience.map((item, index) => (
-            <TimelineItem
-              key={`${item.role}-${item.period}`}
-              item={item}
-              index={index}
-              isLast={index === experience.length - 1}
-            />
+            <TimelineItem key={`${item.organization}-${item.period}`} item={item} isLast={index === experience.length - 1} />
           ))}
-        </ul>
+        </ol>
       </div>
     </section>
   );

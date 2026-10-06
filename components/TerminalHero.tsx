@@ -1,80 +1,76 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-
-type CommandLine = { cmd: string; resp: string };
-
-const COMMANDS: CommandLine[] = [
-  { cmd: "whoami", resp: "Marco Lagunes — Full Stack Developer" },
-  { cmd: "ls projects/", resp: "asommmn/   ultranube/   mkdevsoft/" },
-  { cmd: "cat skills.txt", resp: "React · Next.js · NestJS · MongoDB · JWT" },
-  { cmd: "./disponible --trabajo", resp: "true ✓ Open to work" },
-];
+import type { TerminalLine } from "@/content/types";
 
 const TYPE_SPEED_MS = 45;
 const PAUSE_BEFORE_RESPONSE_MS = 1200;
 const PAUSE_BEFORE_NEXT_MS = 2000;
 
 function Cursor() {
-  return (
-    <span
-      aria-hidden="true"
-      className="animate-blink inline-block text-[#7C6FE0]"
-    >
-      _
-    </span>
-  );
+  return <span className="inline-block animate-blink text-[#7C6FE0]">_</span>;
 }
 
-export function TerminalHero() {
+/**
+ * Terminal decorativa (aria-hidden: todo su contenido existe en el resto de la página).
+ * El tecleo se pausa cuando la terminal sale del viewport; con reduced-motion se muestra estática.
+ */
+export function TerminalHero({ lines, title }: { lines: TerminalLine[]; title: string }) {
   const reduced = useReducedMotion();
-  const [lines, setLines] = useState<CommandLine[]>([]);
+  const ref = useRef<HTMLDivElement>(null);
+  const visibleRef = useRef(true);
+  const [done, setDone] = useState<TerminalLine[]>([]);
   const [currentCmd, setCurrentCmd] = useState("");
   const [currentResp, setCurrentResp] = useState("");
   const [phase, setPhase] = useState<"cmd" | "resp">("cmd");
 
   useEffect(() => {
-    if (reduced) {
-      setLines(COMMANDS);
-      return;
-    }
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      visibleRef.current = entry.isIntersecting;
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
+  useEffect(() => {
+    if (reduced) return;
     let cancelled = false;
     const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+    // Espera mientras la terminal no está en pantalla, sin re-renderizar.
+    const waitVisible = async () => {
+      while (!cancelled && !visibleRef.current) await wait(400);
+    };
+    const type = async (text: string, set: (value: string) => void) => {
+      for (let i = 1; i <= text.length; i++) {
+        await waitVisible();
+        if (cancelled) return;
+        set(text.slice(0, i));
+        await wait(TYPE_SPEED_MS);
+      }
+    };
 
     async function run() {
       while (!cancelled) {
-        for (const line of COMMANDS) {
+        for (const line of lines) {
           setPhase("cmd");
           setCurrentCmd("");
           setCurrentResp("");
-
-          for (let i = 1; i <= line.cmd.length; i++) {
-            if (cancelled) return;
-            setCurrentCmd(line.cmd.slice(0, i));
-            await wait(TYPE_SPEED_MS);
-          }
-          if (cancelled) return;
-
+          await type(line.cmd, setCurrentCmd);
           await wait(PAUSE_BEFORE_RESPONSE_MS);
           if (cancelled) return;
-
           setPhase("resp");
-          for (let i = 1; i <= line.resp.length; i++) {
-            if (cancelled) return;
-            setCurrentResp(line.resp.slice(0, i));
-            await wait(TYPE_SPEED_MS);
-          }
+          await type(line.resp, setCurrentResp);
           if (cancelled) return;
-
-          setLines((prev) => [...prev, line]);
+          setDone((prev) => [...prev, line]);
           setCurrentCmd("");
           setCurrentResp("");
           await wait(PAUSE_BEFORE_NEXT_MS);
+          if (cancelled) return;
         }
-        if (cancelled) return;
-        setLines([]);
+        setDone([]);
       }
     }
 
@@ -82,24 +78,24 @@ export function TerminalHero() {
     return () => {
       cancelled = true;
     };
-  }, [reduced]);
+  }, [reduced, lines]);
+
+  const shown = reduced ? lines : done;
 
   return (
-    <div className="w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-[#0d1117]/90 shadow-2xl backdrop-blur-sm">
+    <div ref={ref} aria-hidden="true" className="w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-[#0d1117]/90 shadow-2xl backdrop-blur-sm">
       <div className="flex items-center gap-1.5 border-b border-white/10 bg-white/[0.03] px-4 py-2.5">
         <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
         <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
         <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
-        <span className="ml-2 truncate font-mono text-[11px] text-white/40">
-          marco@portfolio:~
-        </span>
+        <span className="ml-2 truncate font-mono text-[11px] text-white/60">{title}</span>
       </div>
 
-      <div className="min-h-[210px] px-4 py-4 font-mono text-[13px] leading-relaxed sm:text-sm">
-        {lines.map((line, i) => (
+      <div className="min-h-[250px] px-4 py-4 font-mono text-[13px] leading-relaxed sm:text-sm">
+        {shown.map((line, i) => (
           <div key={i} className="mb-2.5">
-            <p className="text-[#7C6FE0]">
-              <span className="text-[#7C6FE0]/60">$</span> {line.cmd}
+            <p className="text-[#9d93f0]">
+              <span className="text-[#9d93f0]/70">$</span> {line.cmd}
             </p>
             <p className="whitespace-pre-wrap text-emerald-400">{line.resp}</p>
           </div>
@@ -107,8 +103,8 @@ export function TerminalHero() {
 
         {!reduced && (
           <div className="mb-2.5">
-            <p className="text-[#7C6FE0]">
-              <span className="text-[#7C6FE0]/60">$</span> {currentCmd}
+            <p className="text-[#9d93f0]">
+              <span className="text-[#9d93f0]/70">$</span> {currentCmd}
               {phase === "cmd" && <Cursor />}
             </p>
             {phase === "resp" && (

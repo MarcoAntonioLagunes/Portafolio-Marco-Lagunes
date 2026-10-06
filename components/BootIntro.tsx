@@ -20,13 +20,24 @@ export function BootIntro({ soundSrc }: { soundSrc?: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const finishedRef = useRef(false);
 
+  // Sincroniza con sessionStorage/localStorage al montar. No puede ir en el estado inicial:
+  // el servidor no tiene storage y el primer render del cliente debe coincidir con el SSR.
   useEffect(() => {
+    let seen = false;
+    let storedMuted = false;
     const forceReplay = new URLSearchParams(window.location.search).get("boot") === "1";
-    const seen = sessionStorage.getItem(SESSION_KEY);
+    try {
+      seen = sessionStorage.getItem(SESSION_KEY) === "1";
+      if (forceReplay || !seen) sessionStorage.setItem(SESSION_KEY, "1");
+      storedMuted = localStorage.getItem(MUTE_KEY) === "1";
+    } catch {
+      // Storage bloqueado (modo privado estricto): se muestra el intro sin recordar la preferencia.
+    }
     if (forceReplay || !seen) {
-      sessionStorage.setItem(SESSION_KEY, "1");
-      setMuted(localStorage.getItem(MUTE_KEY) === "1");
+      /* eslint-disable react-hooks/set-state-in-effect -- estado derivado de storage externo, solo en el montaje */
+      setMuted(storedMuted);
       setVisible(true);
+      /* eslint-enable react-hooks/set-state-in-effect */
     } else {
       setBooted(true);
     }
@@ -69,7 +80,11 @@ export function BootIntro({ soundSrc }: { soundSrc?: string }) {
   const toggleMute = () => {
     setMuted((prev) => {
       const next = !prev;
-      localStorage.setItem(MUTE_KEY, next ? "1" : "0");
+      try {
+        localStorage.setItem(MUTE_KEY, next ? "1" : "0");
+      } catch {
+        // Sin storage: la preferencia dura solo esta visita.
+      }
       return next;
     });
   };

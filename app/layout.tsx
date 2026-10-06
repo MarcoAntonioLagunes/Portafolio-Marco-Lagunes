@@ -8,6 +8,7 @@ import { CustomCursor } from "@/components/CustomCursor";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { getProfile } from "@/content";
 import { GITHUB_URL, LINKEDIN_URL, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -26,52 +27,30 @@ const jetbrainsMono = JetBrains_Mono({
 const BOOT_SOUND = "/sounds/boot.mp3";
 const hasBootSound = fs.existsSync(path.join(process.cwd(), "public", BOOT_SOUND));
 
-const SITE_TITLE = "Marco Lagunes — Desarrollador Full-Stack";
-const SITE_DESCRIPTION =
-  "Ingeniero en Sistemas Computacionales y desarrollador full-stack certificado en Cisco CCST Cybersecurity. Diseño y despliego aplicaciones web completas con foco en seguridad desde el diseño.";
+const profile = getProfile();
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: SITE_TITLE,
-    template: "%s · Marco Lagunes",
+    default: profile.meta.title,
+    template: `%s · ${profile.person.name}`,
   },
-  description: SITE_DESCRIPTION,
-  keywords: [
-    "Marco Lagunes",
-    "desarrollador full-stack",
-    "ciberseguridad",
-    "React",
-    "Next.js",
-    "Node.js",
-    "Veracruz México",
-    "portafolio desarrollador",
-  ],
-  authors: [{ name: "Marco Lagunes", url: SITE_URL }],
-  creator: "Marco Lagunes",
+  description: profile.meta.description,
+  keywords: profile.meta.keywords,
+  authors: [{ name: profile.person.name, url: SITE_URL }],
+  creator: profile.person.name,
   openGraph: {
     type: "website",
-    locale: "es_MX",
+    locale: profile.meta.ogLocale,
     url: SITE_URL,
-    siteName: "Marco Lagunes · Portafolio",
-    title: SITE_TITLE,
-    description:
-      "Construyendo software seguro y listo para producción, de principio a fin.",
-    images: [
-      {
-        url: "/images/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Marco Lagunes — Desarrollador Full-Stack",
-      },
-    ],
+    siteName: `${profile.person.name} · Portafolio`,
+    title: profile.meta.title,
+    description: profile.meta.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_TITLE,
-    description:
-      "Ingeniero en Sistemas Computacionales · Full-Stack · Ciberseguridad Aplicada",
-    images: ["/images/og-image.png"],
+    title: profile.meta.title,
+    description: profile.meta.description,
   },
   icons: {
     icon: "/favicon.ico",
@@ -85,18 +64,18 @@ export const metadata: Metadata = {
   },
 };
 
-const personJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Marco Lagunes",
-  url: SITE_URL,
-  jobTitle: "Full-Stack Developer",
-  sameAs: [GITHUB_URL, LINKEDIN_URL],
-};
-
 export const viewport: Viewport = {
   themeColor: "#06090F",
   colorScheme: "dark",
+};
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: profile.person.name,
+  url: SITE_URL,
+  jobTitle: profile.person.jobTitle,
+  sameAs: [GITHUB_URL, LINKEDIN_URL],
 };
 
 export default function RootLayout({
@@ -106,7 +85,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="es"
+      lang={profile.locale}
       className={`${inter.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full bg-background text-foreground">
@@ -114,19 +93,25 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
+        <a
+          href="#contenido"
+          className="sr-only z-[200] rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        >
+          {profile.ui.skipToContent}
+        </a>
         <BootProvider>
           <CustomCursor />
           <ScrollProgress />
 
           <div className="relative z-10 flex min-h-screen flex-col">
             <BootIntro soundSrc={hasBootSound ? BOOT_SOUND : undefined} />
-            <Navbar />
+            <Navbar links={profile.nav} strings={profile.ui} />
 
-            <main className="relative flex-1">
+            <div id="contenido" className="relative flex-1">
               {children}
-            </main>
+            </div>
 
-            <Footer />
+            <Footer profile={profile} />
           </div>
         </BootProvider>
       </body>

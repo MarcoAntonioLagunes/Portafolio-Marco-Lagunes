@@ -1,11 +1,12 @@
-import { Briefcase, Code2, Mail, Phone } from "lucide-react";
-import type { SocialLink } from "@/lib/types";
+import { Briefcase, Code2, Mail, MessageCircle, Phone } from "lucide-react";
+import type { SocialLink } from "@/content/types";
 
 const ICONS = {
   github: Code2,
   linkedin: Briefcase,
   mail: Mail,
   phone: Phone,
+  whatsapp: MessageCircle,
 } satisfies Record<SocialLink["icon"], typeof Code2>;
 
 export function SocialIcon({
@@ -16,5 +17,5 @@ export function SocialIcon({
   className?: string;
 }) {
   const Icon = ICONS[icon];
-  return <Icon className={className} />;
+  return <Icon aria-hidden="true" className={className} />;
 }

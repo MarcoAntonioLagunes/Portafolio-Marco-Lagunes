@@ -1,64 +1,50 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
-import { Code2, Server, ShieldCheck, Wrench } from "lucide-react";
+import { Code2, Database, Server, ShieldCheck, Wrench } from "lucide-react";
 import { Marquee } from "@/components/Marquee";
 import { ParticleBackground } from "@/components/ParticleBackground";
 import { SectionHeading } from "@/components/SectionHeading";
-import { fadeInUpItemVariants, staggerContainerProps } from "@/lib/animations";
-import { skills } from "@/lib/data";
-import type { SkillCategory } from "@/lib/types";
+import { PLACEHOLDER_RE } from "@/content/derived";
+import type { Profile, SkillCategory } from "@/content/types";
 
 const ICONS = {
   code: Code2,
   server: Server,
   shield: ShieldCheck,
   wrench: Wrench,
+  data: Database,
 } satisfies Record<SkillCategory["icon"], typeof Code2>;
 
-export function Skills() {
-  const reduced = useReducedMotion();
-  const allSkillNames = skills.flatMap((category) => category.skills);
+export function Skills({ profile }: { profile: Profile }) {
+  const { stack, ui } = profile;
+  const categories = stack.filter((category) => category.skills.length > 0);
+  // Los placeholders [COMPLETAR] se muestran en su tarjeta, pero no en la marquesina.
+  const marqueeItems = categories.flatMap((category) => category.skills).filter((skill) => !PLACEHOLDER_RE.test(skill));
 
   return (
-    <section id="stack" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border bg-surface2/40 py-24">
+    <section id="stack" aria-labelledby="stack-title" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border bg-surface2/40 py-24">
       <ParticleBackground density="medium" />
       <div className="relative z-10 mx-auto max-w-6xl px-6">
-        <SectionHeading eyebrow="stack" title="Stack técnico" />
+        <SectionHeading id="stack-title" {...ui.sections.stack} />
 
-        <Marquee items={allSkillNames} className="mb-10" />
+        <Marquee items={marqueeItems} label={ui.stackMarqueeLabel} className="mb-10" />
 
-        <motion.div
-          {...staggerContainerProps(!!reduced)}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {skills.map((category) => {
+        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+          {categories.map((category) => {
             const Icon = ICONS[category.icon];
             return (
-              <motion.div
-                key={category.category}
-                variants={fadeInUpItemVariants(!!reduced)}
-                className="rounded-2xl border border-border bg-card p-6"
-              >
-                <Icon className="h-6 w-6 text-accent" />
-                <h3 className="mt-4 text-sm font-semibold text-foreground">
-                  {category.category}
-                </h3>
-
+              <li key={category.category} className="reveal rounded-2xl border border-border bg-card p-6">
+                <Icon aria-hidden="true" className="h-6 w-6 text-accent" />
+                <h3 className="mt-4 text-sm font-semibold text-foreground">{category.category}</h3>
                 <ul className="mt-4 flex flex-wrap gap-2">
                   {category.skills.map((skill) => (
-                    <li
-                      key={skill}
-                      className="rounded-full border border-border bg-muted px-3 py-1 font-mono text-xs text-muted-foreground"
-                    >
+                    <li key={skill} className="rounded-full border border-border bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">
                       {skill}
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </li>
             );
           })}
-        </motion.div>
+        </ul>
       </div>
     </section>
   );

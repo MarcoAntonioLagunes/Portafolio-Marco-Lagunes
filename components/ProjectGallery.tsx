@@ -4,7 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { GalleryItem, GalleryVideoItem } from "@/lib/types";
+import type { GalleryItem, GalleryVideoItem } from "@/content/types";
+
+export interface GalleryStrings {
+  galleryLabel: string;
+  prevSlide: string;
+  nextSlide: string;
+  goToSlide: string;
+}
 
 function BrowserChrome({ mockUrl }: { mockUrl?: string }) {
   return (
@@ -71,10 +78,14 @@ export function ProjectGallery({
   items,
   mockUrl,
   projectTitle,
+  strings,
+  sizes = "(max-width: 640px) 100vw, 400px",
 }: {
   items: GalleryItem[];
   mockUrl?: string;
   projectTitle: string;
+  strings: GalleryStrings;
+  sizes?: string;
 }) {
   const [index, setIndex] = useState(0);
   const reduced = useReducedMotion();
@@ -105,7 +116,7 @@ export function ProjectGallery({
                 src={current.src}
                 alt={current.alt}
                 fill
-                sizes="(max-width: 640px) 100vw, 400px"
+                sizes={sizes}
                 className="object-cover"
               />
             ) : (
@@ -119,18 +130,18 @@ export function ProjectGallery({
             <button
               type="button"
               onClick={() => goTo(index - 1)}
-              aria-label={`Diapositiva anterior de ${projectTitle}`}
+              aria-label={`${strings.prevSlide} ${projectTitle}`}
               className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/60 p-1.5 text-foreground opacity-0 transition-opacity duration-200 hover:text-accent focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover/gallery:opacity-100"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft aria-hidden="true" className="h-4 w-4" />
             </button>
             <button
               type="button"
               onClick={() => goTo(index + 1)}
-              aria-label={`Siguiente diapositiva de ${projectTitle}`}
+              aria-label={`${strings.nextSlide} ${projectTitle}`}
               className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/60 p-1.5 text-foreground opacity-0 transition-opacity duration-200 hover:text-accent focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover/gallery:opacity-100"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight aria-hidden="true" className="h-4 w-4" />
             </button>
           </>
         )}
@@ -139,18 +150,17 @@ export function ProjectGallery({
       {items.length > 1 && (
         <div
           className="mt-2.5 flex justify-center gap-1.5"
-          role="tablist"
-          aria-label={`Galería de ${projectTitle}`}
+          role="group"
+          aria-label={`${strings.galleryLabel} ${projectTitle}`}
         >
           {items.map((_, i) => (
             <button
               key={i}
               type="button"
-              role="tab"
-              aria-selected={i === index}
-              aria-label={`Ir a la diapositiva ${i + 1} de ${items.length}`}
+              aria-current={i === index ? "true" : undefined}
+              aria-label={`${strings.goToSlide} ${i + 1} / ${items.length}`}
               onClick={() => goTo(i)}
-              className={`h-1.5 rounded-full transition-all duration-200 ${
+              className={`relative h-1.5 rounded-full transition-all duration-200 before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[""] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 i === index ? "w-4 bg-accent" : "w-1.5 bg-border hover:bg-muted-foreground"
               }`}
             />

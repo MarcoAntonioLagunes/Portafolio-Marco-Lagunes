@@ -1,28 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "@/components/MobileMenu";
+import type { NavLink } from "@/content/types";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [
-  { label: "Sobre mí", href: "#sobre-mi" },
-  { label: "Experiencia", href: "#experiencia" },
-  { label: "Proyectos", href: "#proyectos" },
-  { label: "Certificaciones", href: "#certificaciones" },
-  { label: "Educación", href: "#educacion" },
-  { label: "Stack", href: "#stack" },
-  { label: "Fortalezas", href: "#fortalezas" },
-  { label: "Contacto", href: "#contacto" },
-];
+export interface NavbarStrings {
+  openMenu: string;
+  closeMenu: string;
+  goHome: string;
+}
 
-export function Navbar() {
+export function Navbar({
+  links,
+  strings,
+  homeHref = "#top",
+  actions,
+}: {
+  links: NavLink[];
+  strings: NavbarStrings;
+  /** En páginas internas las anclas apuntan al home (p. ej. "/#proyectos"). */
+  homeHref?: string;
+  /** Controles extra a la derecha (p. ej. selector de idioma), renderizados en el servidor. */
+  actions?: React.ReactNode;
+}) {
   const { scrollY } = useScroll();
+  const reduced = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeId, setActiveId] = useState<string>("sobre-mi");
+  const [activeId, setActiveId] = useState<string>("");
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 50);
@@ -31,49 +41,46 @@ export function Navbar() {
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("main section[id]"));
     if (sections.length === 0) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((entry) => entry.isIntersecting);
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id);
-        }
+        if (visible.length > 0) setActiveId(visible[0].target.id);
       },
       { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
     );
-
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
 
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false);
+    menuButtonRef.current?.focus();
+  }, []);
+
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled
-          ? "border-b border-border bg-background/70 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent"
-      }`}
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+        scrolled ? "border-b border-border bg-background/80 backdrop-blur-md" : "border-b border-transparent bg-transparent",
+      )}
     >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <a href="#top" className="flex items-center gap-2" aria-label="Ir al inicio">
-          <Logo className="h-8 w-8" />
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
+        <a href={homeHref} className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={strings.goHome}>
+          <Logo className="h-8 w-8" decorative />
         </a>
 
-        <ul className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => {
-            const isActive = activeId === link.href.slice(1);
+        <ul className="hidden items-center gap-6 lg:flex">
+          {links.map((link) => {
+            const id = link.href.split("#")[1];
+            const isActive = activeId === id;
             return (
               <li key={link.href} className="relative py-2">
                 <a
                   href={link.href}
+                  aria-current={isActive ? "location" : undefined}
                   className={cn(
-                    "relative font-mono text-xs uppercase tracking-widest transition-colors",
+                    "relative rounded-sm font-mono text-xs uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-                    "after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-foreground after:transition-transform after:duration-300",
-                    !isActive && "hover:after:scale-x-100",
                   )}
                 >
                   {link.label}
@@ -81,8 +88,9 @@ export function Navbar() {
                 {isActive && (
                   <motion.span
                     layoutId="navbar-active-indicator"
+                    aria-hidden="true"
                     className="absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-accent"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
               </li>
@@ -90,22 +98,23 @@ export function Navbar() {
           })}
         </ul>
 
-        <button
-          type="button"
-          aria-label="Abrir menú"
-          onClick={() => setMenuOpen(true)}
-          className="rounded-md p-2 text-foreground md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          {actions}
+          <button
+            ref={menuButtonRef}
+            type="button"
+            aria-label={strings.openMenu}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMenuOpen(true)}
+            className="rounded-md p-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
+          >
+            <Menu aria-hidden="true" className="h-5 w-5" />
+          </button>
+        </div>
       </nav>
 
-      <MobileMenu
-        open={menuOpen}
-        links={NAV_LINKS}
-        activeId={activeId}
-        onClose={() => setMenuOpen(false)}
-      />
-    </motion.header>
+      <MobileMenu open={menuOpen} links={links} activeId={activeId} closeLabel={strings.closeMenu} onClose={closeMenu} />
+    </header>
   );
 }
