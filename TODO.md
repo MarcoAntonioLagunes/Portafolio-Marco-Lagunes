@@ -5,7 +5,7 @@ Al completar un dato, bórralo de esta lista.
 
 ## Acciones en Netlify / dominios
 
-- [ ] **Netlify Forms:** en *Site configuration → Forms*, verifica que **Form detection** esté activado. Después del primer deploy debe aparecer el formulario `contacto`. En *Forms → Notifications* agrega tu email para recibir cada mensaje.
+- [ ] **Netlify Forms:** el deploy preview se probó con validación vacía y un envío válido; el POST a `/__forms.html` devuelve 404 hasta activar **Form detection** en *Site configuration → Forms*. Actívalo, confirma que aparece `contacto` en *Forms* y agrega tu email en *Forms → Notifications*. Después, repite un envío real y confirma que aparece en el panel de Netlify.
 - [ ] **UltraNube:** `ultranube.com.mx` no resuelve DNS (dominio vencido o sin registro A). Renueva o configura el dominio, o dame la URL nueva. Mientras tanto, el link del proyecto queda oculto.
 - [ ] **MKDevSoft:** `mkdevsoft.netlify.app` da 404. Confirma la URL real del sitio. Mientras tanto, el link queda oculto.
 - [ ] **MKDevSoft (en su propio sitio):** el video del recorrido muestra "Desplegado en Vercel" en la terminal del hero de MKDevSoft. Si ese sitio está en Netlify, corrígelo allá.

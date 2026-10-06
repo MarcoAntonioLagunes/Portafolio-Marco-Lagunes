@@ -1,7 +1,8 @@
 # Auditoría del portafolio — Fase 0
 
 **Sitio auditado:** https://portafoliomarcolagunes.netlify.app (producción, commit `d702ffd`)
-**Fecha:** 2026-10-05
+**Auditoría inicial:** 2026-10-05
+**Cierre de verificación Fase 8:** 2026-10-06 (deploy preview de Netlify, rama `portfolio-v2`)
 **Herramientas:** Playwright 1.63 (Chrome) para links y SSR, Lighthouse 12 (mobile y desktop), `curl`, `dns.resolve4` de Node y perfiles CDP con CPU 4×.
 
 Severidades:
@@ -199,6 +200,53 @@ Nuevos hallazgos que no estaban en tu lista: C1, C2, C3, C6, C8, M3, M4, M5, M6,
 
 ---
 
-## Antes / después
+## Fase 8 — verificación final (2026-10-06)
 
-_Se completa en la Fase 8._
+### Validaciones funcionales
+
+| Verificación | Resultado |
+|---|---|
+| `npm run build` | ✅ Correcto; prerenderizó home ES/EN, los 6 casos de estudio, ambos CV, OG images, `robots.txt` y `sitemap.xml`. |
+| `npx tsc --noEmit` | ✅ Sin errores. |
+| `npm run lint` | ✅ Sin errores ni warnings. |
+| Links del HTML en el deploy preview | ✅ 34 links HTTP únicos: 25 internos y 9 externos; los 34 respondieron `200`. `mailto:` y `tel:` se excluyeron porque no son URLs HTTP. |
+| Anclas de la home ES | ✅ Los 20 links con fragmento apuntan a IDs presentes (`#contenido`, `#top` y las anclas de secciones). |
+| Responsive | ✅ Probado en 375, 768 y 1440 px; sin overflow horizontal. |
+| Teclado | ✅ Foco visible al recorrer navegación; en móvil el menú abre, Escape lo cierra y el foco vuelve al botón. |
+| Rutas y redirects en Netlify | ✅ `/` usa `Accept-Language` y cookie; `/proyectos/...` se traduce a `/projects/...` en inglés. El CV anterior `/Marks_CV.pdf` redirige con 301 al nuevo PDF. |
+| Recursos y SEO técnico | ✅ PDFs, videos, posters, imágenes OG, `robots.txt` y `sitemap.xml` responden `200`. La sitemap publica las 8 URLs localizadas y sus hreflang. |
+| Links externos muertos encontrados en Fase 0 | ✅ UltraNube y MKDevSoft no muestran link de demo mientras sus URLs reales no se confirmen. |
+| Assets publicados | ✅ Ya no hay nombres con espacios o paréntesis en `public/images`; también se quitó la carpeta guardada `videoclipmkdevsoft_files/`. |
+| Formulario Netlify | ⚠️ Validación vacía muestra tres errores, enfoca el primer campo y no envía. Un envío válido en el preview obtiene `404` de `/__forms.html` y muestra estado de error, no un falso éxito. Falta activar Form detection en la cuenta de Netlify y repetir el envío. |
+
+### Lighthouse en el deploy preview
+
+Lighthouse 12.8.2, Chrome, una ejecución por ruta/dispositivo, el 2026-10-06. Las cifras se muestran tal cual; no se omiten los resultados por debajo de la meta.
+
+| Ruta | Dispositivo | Performance | Accesibilidad | Best Practices | SEO | FCP | LCP | TBT |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `/es` | Mobile | 59 | 100 | 96 | 69 | 2.1 s | 4.5 s | 740 ms |
+| `/es` | Desktop | 78 | 100 | 96 | 69 | 0.9 s | 1.4 s | 240 ms |
+| `/en` | Mobile | 43 | 100 | 96 | 69 | 2.7 s | 5.0 s | 1,880 ms |
+| `/en` | Desktop | 83 | 100 | 96 | 69 | 1.2 s | 1.6 s | 100 ms |
+| Caso ASOMMMN ES | Mobile | 43 | 100 | 96 | 66 | 2.5 s | 6.5 s | 1,400 ms |
+| Caso ASOMMMN ES | Desktop | 88 | 100 | 96 | 66 | 0.7 s | 1.4 s | 140 ms |
+
+**La meta de Performance ≥90 aún no se cumple**: el rango medido es 43–59 en mobile y 78–88 en desktop. El cuello de botella incluye ejecución/hidratación de JavaScript, trabajo de main thread y renderizado; hacen falta más optimizaciones antes de afirmar que el objetivo se alcanzó.
+
+Las categorías SEO/Best Practices del preview no representan una evaluación limpia de producción: Netlify añade `X-Robots-Tag: noindex` al deploy preview (Lighthouse reporta `is-crawlable = 0`) y el drawer de colaboración inyecta `/.netlify/scripts/cdp`, que genera `inspector-issues`. El `noindex` del preview es intencional; no se debe quitar para inflar esos puntajes. Se debe revisar SEO y Best Practices de nuevo cuando la rama esté desplegada en el dominio productivo.
+
+### Antes / después
+
+| Hallazgo inicial | Estado al cierre |
+|---|---|
+| El formulario contestaba éxito sin entregar el mensaje | ✅ El éxito solo aparece después de un POST aceptado; el preview devuelve error visible hasta activar Netlify Forms. |
+| URLs rotas de UltraNube y MKDevSoft | ✅ Se ocultan los links de demo hasta confirmar URLs; repos públicos responden `200`. |
+| Footer enlazaba a un dominio de portafolio incorrecto | ✅ Un solo `SITE_URL`; el home productivo responde `200`. |
+| `marcolagunes.dev` en OG, canonical, sitemap y robots | ✅ Metadata localizada, canonical/hreflang y sitemap apuntan al host Netlify. El texto `marcolagunes.dev` que permanece es solo parte del email proporcionado. |
+| H1 vacío, métricas iniciales en cero y titular sin espacios | ✅ Nombre y valores finales presentes en SSR; titular con texto accesible y espacios reales. |
+| Videos pesados o sin poster | ✅ Videos renombrados y comprimidos: ASOMMMN 9.8 MB → 1.57 MB; MKDevSoft 41 MB → 2.20 MB. Ambos con poster, `preload="metadata"`, `muted`, `playsInline` y `loop`. |
+| Intro intentaba cargar un MP3 inexistente | ✅ El audio no se renderiza ni solicita si falta el archivo. |
+| Problemas de contraste/label y duplicación accesible de la marquesina | ✅ Lighthouse reporta Accesibilidad 100 en las seis páginas; hit areas de galería ampliadas y el duplicado decorativo se oculta a lectores de pantalla. |
+| CV `Marks_CV.pdf` y links del CV no imprimibles | ✅ CV ES y résumé EN generados desde el perfil, con links clicables; redirect 301 conserva la ruta antigua. |
+| Lighthouse mobile 50 / desktop 90 en el baseline anterior | ⚠️ Accesibilidad sube de 97 a 100; Best Practices medido en preview queda en 96 y SEO queda afectado por `noindex`; Performance sigue bajo la meta y requiere otra iteración. |
