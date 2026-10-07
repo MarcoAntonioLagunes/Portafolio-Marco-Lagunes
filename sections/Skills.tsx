@@ -1,7 +1,6 @@
 import { Code2, Database, Server, ShieldCheck, Wrench } from "lucide-react";
-import { Marquee } from "@/components/Marquee";
 import { SectionHeading } from "@/components/SectionHeading";
-import { PLACEHOLDER_RE } from "@/content/derived";
+import { ToolsCarousel } from "@/components/ToolsCarousel";
 import type { Profile, SkillCategory } from "@/content/types";
 
 const ICONS = {
@@ -15,15 +14,15 @@ const ICONS = {
 export function Skills({ profile }: { profile: Profile }) {
   const { stack, ui } = profile;
   const categories = stack.filter((category) => category.skills.length > 0);
-  // Los placeholders [COMPLETAR] se muestran en su tarjeta, pero no en la marquesina.
-  const marqueeItems = categories.flatMap((category) => category.skills).filter((skill) => !PLACEHOLDER_RE.test(skill));
 
   return (
     <section id="stack" aria-labelledby="stack-title" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border bg-surface2/40 py-24">
       <div className="relative z-10 mx-auto max-w-6xl px-6">
         <SectionHeading id="stack-title" {...ui.sections.stack} />
 
-        <Marquee items={marqueeItems} label={ui.stackMarqueeLabel} className="mb-10" />
+        <div className="mb-10">
+          <ToolsCarousel label={ui.stackMarqueeLabel} />
+        </div>
 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {categories.map((category) => {

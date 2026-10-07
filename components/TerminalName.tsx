@@ -8,8 +8,18 @@ const CHAR_INTERVAL_S = 0.055;
  * (crawlers, previews y lectores sin JS) y cada carácter aparece con un retraso escalonado.
  * Cada palabra va en su propia línea; el espacio real entre ellas se conserva en el texto.
  * Con prefers-reduced-motion se muestra completo de inmediato (ver .type-char en globals.css).
+ * `shineLastWord`: la última palabra (p. ej. el apellido) queda con un filo dorado que la
+ * recorre cada pocos segundos (ver .name-shine en globals.css).
  */
-export function TerminalName({ text, className }: { text: string; className?: string }) {
+export function TerminalName({
+  text,
+  className,
+  shineLastWord = false,
+}: {
+  text: string;
+  className?: string;
+  shineLastWord?: boolean;
+}) {
   const words = text.split(" ");
   let index = 0;
 
@@ -18,7 +28,7 @@ export function TerminalName({ text, className }: { text: string; className?: st
       {words.map((word, w) => {
         const isLast = w === words.length - 1;
         return (
-          <span key={word + w} aria-hidden="true" className="block">
+          <span key={word + w} aria-hidden="true" className={cn("block", isLast && shineLastWord && "name-shine")}>
             {Array.from(word).map((char) => {
               const delay = START_DELAY_S + index++ * CHAR_INTERVAL_S;
               return (

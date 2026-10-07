@@ -4,23 +4,23 @@
 
 @layer base {
   :root {
-    /* Carta náutica: abismo, casco, espuma y bruma; ámbar de faro como acento y sonar para "en producción". */
-    --background: 198 56% 6%;
-    --foreground: 165 22% 93%;
-    --surface-2: 198 52% 9%;
-    --surface-3: 197 49% 11%;
-    --card: 198 50% 10%;
-    --card-foreground: 165 22% 93%;
-    --border: 196 38% 18%;
-    --muted: 196 44% 14%;
-    --muted-foreground: 191 15% 66%;
-    --navy: 198 50% 13%;
-    --navy-foreground: 165 22% 93%;
-    --accent: 36 100% 64%;
-    --accent-foreground: 198 56% 6%;
-    --beacon: 38 100% 79%;
-    --sonar: 174 59% 56%;
-    --ring: 36 100% 64%;
+    /* Cósmico: negro profundo y grises neutros (sin tinte verde/azul), con dorado como único acento. */
+    --background: 0 0% 1%;
+    --foreground: 0 0% 95%;
+    --surface-2: 0 0% 3%;
+    --surface-3: 0 0% 5%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 95%;
+    --border: 0 0% 11%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 63%;
+    --navy: 0 0% 9%;
+    --navy-foreground: 0 0% 95%;
+    --accent: 37 90% 61%;
+    --accent-foreground: 0 0% 6%;
+    --beacon: 42 95% 74%;
+    --sonar: 42 90% 68%;
+    --ring: 37 90% 61%;
   }
 
   * {
@@ -35,18 +35,6 @@
     @apply bg-background text-foreground antialiased;
     min-width: 320px;
     overflow-x: hidden;
-  }
-
-  /* Profundidad: el agua se oscurece hacia abajo, con un reflejo frío en la superficie. */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 70% 45% at 85% -5%, hsl(var(--sonar) / 0.07), transparent 70%),
-      linear-gradient(to bottom, hsl(var(--surface-2)), hsl(var(--background)) 40%);
   }
 
   ::selection {
@@ -89,20 +77,67 @@
     line-height: 0.88;
   }
 
-  /* Curvas batimétricas del hero: se trazan al cargar, de la costa hacia lo profundo. */
-  .bathymetry path {
-    fill: none;
-    stroke: currentColor;
-    vector-effect: non-scaling-stroke;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-    animation: chart-draw 2.6s cubic-bezier(0.33, 0, 0.2, 1) both;
+  /*
+   * Brillo que recorre el apellido en el hero (TerminalName, shineLastWord): el texto se queda en
+   * --foreground casi todo el ciclo y un filo dorado lo cruza una vez cada pocos segundos.
+   */
+  .name-shine {
+    background: linear-gradient(
+      100deg,
+      hsl(var(--foreground)) 0%,
+      hsl(var(--foreground)) 42%,
+      hsl(var(--beacon)) 50%,
+      hsl(var(--foreground)) 58%,
+      hsl(var(--foreground)) 100%
+    );
+    background-size: 280% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: name-shine 5.5s ease-in-out infinite;
   }
 
-  .bathymetry text {
+  /* Tarjeta del carrusel de herramientas (ToolsCarousel). */
+  .tool-card {
+    display: flex;
+    width: 112px;
+    height: 118px;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    border-radius: 0.875rem;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
+
+  .tool-card:hover {
+    transform: translateY(-4px);
+    border-color: hsl(var(--accent));
+    box-shadow: 0 12px 28px -12px hsl(var(--accent) / 0.5), 0 0 0 1px hsl(var(--accent) / 0.2);
+  }
+
+  .tool-card-icon {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+  }
+
+  .tool-card-icon-invert {
+    filter: invert(1);
+  }
+
+  .tool-card-name {
     font-family: var(--font-jetbrains-mono), monospace;
-    fill: currentColor;
-    animation: gallery-fade-in 0.8s ease-out 1.6s both;
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
   }
 
   /* Pulso de sonar alrededor de la foto. */
@@ -257,6 +292,80 @@
   }
 }
 
+/* Fondo "Cósmico" global (CosmicBackground): resplandores de esquina y haz diagonal en CSS puro; */
+/* el polvo de oro, el bokeh, los destellos, las fugaces y las constelaciones van en su <canvas>. */
+.cosmic-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cosmic-glow-tr,
+.cosmic-glow-bl {
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 9999px;
+  filter: blur(90px);
+}
+
+.cosmic-glow-tr {
+  top: -20vmax;
+  right: -20vmax;
+  background: radial-gradient(circle, hsl(var(--accent) / 0.22), transparent 70%);
+  animation: cosmic-glow-breathe 12s ease-in-out infinite;
+}
+
+.cosmic-glow-bl {
+  bottom: -22vmax;
+  left: -22vmax;
+  background: radial-gradient(circle, hsl(var(--accent) / 0.16), transparent 70%);
+  animation: cosmic-glow-breathe 14s ease-in-out infinite reverse;
+}
+
+.cosmic-beam {
+  position: absolute;
+  top: -50%;
+  left: -30%;
+  width: 55%;
+  height: 220%;
+  background: linear-gradient(100deg, transparent 42%, hsl(var(--accent) / 0.05) 50%, transparent 58%);
+  animation: cosmic-beam-sweep 24s linear infinite;
+}
+
+.cosmic-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes cosmic-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes cosmic-beam-sweep {
+  0% {
+    transform: translateX(-25vw) rotate(18deg);
+  }
+  50% {
+    transform: translateX(55vw) rotate(18deg);
+  }
+  100% {
+    transform: translateX(-25vw) rotate(18deg);
+  }
+}
+
 @keyframes float-y {
   0%,
   100% {
@@ -267,9 +376,9 @@
   }
 }
 
-@keyframes chart-draw {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
+@keyframes name-shine {
+  0%, 18% { background-position: 150% 0; }
+  45%, 100% { background-position: -70% 0; }
 }
 
 @keyframes sonar-ping {
@@ -372,14 +481,29 @@ main#top > section:not(:first-of-type) {
   .animate-rise,
   .type-char,
   .word-reveal,
-  .gallery-slide,
-  .bathymetry path,
-  .bathymetry text {
+  .gallery-slide {
     animation: none !important;
   }
 
   .sonar-ping {
     display: none;
+  }
+
+  .name-shine {
+    animation: none !important;
+    background: none !important;
+    color: hsl(var(--foreground)) !important;
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+  }
+
+  .tool-card:hover {
+    transform: none;
+  }
+
+  .cosmic-glow-tr,
+  .cosmic-glow-bl,
+  .cosmic-beam {
+    animation: none !important;
   }
 
   /* Duraciones mínimas (no "none"): animationend/transitionend deben dispararse para cerrar el intro. */
@@ -401,7 +525,9 @@ main#top > section:not(:first-of-type) {
 
   .marquee-copy { display: none; }
   .marquee-track { width: auto; }
-  .marquee-list { flex-wrap: wrap; justify-content: center; padding-right: 0; }
+  /* width:100% es necesario: shrink-0 hace que la lista se mida por su contenido (max-content),
+     y un flex-wrap nunca envuelve una caja que ya se dimensionó para no necesitarlo. */
+  .marquee-list { width: 100%; flex-wrap: wrap; justify-content: center; padding-right: 0; }
 }
 
 /* CV imprimible (/es/cv, /en/cv): solo la hoja, sin navegación ni decoraciones. */
@@ -421,7 +547,6 @@ main#top > section:not(:first-of-type) {
     background: #fff !important;
   }
 
-  body::before,
   .no-print,
   .custom-cursor-dot,
   .custom-cursor-ring {

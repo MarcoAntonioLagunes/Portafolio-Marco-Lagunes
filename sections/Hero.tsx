@@ -1,4 +1,3 @@
-import { Bathymetry } from "@/components/Bathymetry";
 import { CvButton } from "@/components/CvButton";
 import { HeroAvatar } from "@/components/HeroAvatar";
 import { SocialIcon } from "@/components/SocialIcon";
@@ -23,9 +22,6 @@ export function Hero({ profile }: { profile: Profile }) {
 
   return (
     <section id="sobre-mi" className="relative isolate flex min-h-[100svh] items-center overflow-hidden pb-16 pt-28 md:pb-20 md:pt-32">
-      {/* Carta batimétrica (decorativa). En mobile se desvanece para no competir con el texto. */}
-      <Bathymetry className="absolute inset-0 -z-10 h-full w-full text-sonar [mask-image:linear-gradient(to_bottom,black_60%,transparent)] max-md:opacity-60" />
-
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:items-center md:gap-12">
         <div className="animate-rise">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -44,6 +40,7 @@ export function Hero({ profile }: { profile: Profile }) {
 
           <TerminalName
             text={person.name}
+            shineLastWord
             className="display mt-6 text-[clamp(4.5rem,15vw,9.5rem)] text-foreground [text-shadow:0_2px_40px_hsl(var(--background))]"
           />
 

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Big_Shoulders, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@/components/Analytics";
 import { BootIntro } from "@/components/BootIntro";
+import { CosmicBackground } from "@/components/CosmicBackground";
 import { CustomCursor } from "@/components/CustomCursor";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Navbar } from "@/components/Navbar";
@@ -73,7 +74,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 }
 
 export const viewport: Viewport = {
-  themeColor: "#071319",
+  themeColor: "#030303",
   colorScheme: "dark",
 };
 
@@ -92,6 +93,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         >
           {profile.ui.skipToContent}
         </a>
+        <CosmicBackground />
         <CustomCursor />
         <ScrollProgress />
 
