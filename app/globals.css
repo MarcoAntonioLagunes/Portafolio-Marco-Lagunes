@@ -131,17 +131,30 @@
     content: "ML";
   }
 
-  /* Nombre gigante del footer: contorno con un destello de faro que lo recorre. */
+  /*
+   * Nombre gigante del footer: degradado rosa/violeta/cian recorriéndolo (igual que antes del
+   * rediseño). clamp() calibrado para la fuente condensada actual (Big Shoulders): cabe completo
+   * en una sola línea desde 320px hasta pantallas muy anchas, sin recortarse ni desbordar.
+   */
   .footer-sweep-name {
-    font-size: clamp(64px, 16vw, 220px);
-    background: linear-gradient(90deg, transparent 0%, transparent 30%, hsl(var(--accent)) 46%, hsl(var(--beacon)) 50%, hsl(var(--accent)) 54%, transparent 70%, transparent 100%);
+    font-size: clamp(42px, 12vw, 150px);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 15%,
+      #e040a0 32%,
+      #7c6fe0 50%,
+      #40c8e0 68%,
+      transparent 85%,
+      transparent 100%
+    );
     background-size: 300% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px hsl(var(--border));
-    animation: footer-sweep 9s ease-in-out infinite;
+    animation: footer-sweep 7s ease-in-out infinite;
+    opacity: 0.18;
   }
 
   /* Cursor personalizado (CustomCursor). El cursor nativo se conserva en campos de texto. */
@@ -319,7 +332,9 @@ main#top > section:not(:first-of-type) {
 
 @keyframes footer-sweep {
   0% { background-position: 120% 0; }
-  100% { background-position: -120% 0; }
+  45% { background-position: 0% 0; opacity: 0.22; }
+  65% { background-position: -10% 0; opacity: 0.22; }
+  100% { background-position: -120% 0; opacity: 0.18; }
 }
 
 @keyframes boot-progress {
