@@ -174,7 +174,6 @@ export interface Profile {
     terminal: TerminalLine[];
     terminalTitle: string;
     avatarAlt: string;
-    scrollCue: string;
   };
   metrics: Metric[];
   socials: SocialLink[];
@@ -192,7 +191,6 @@ export interface Profile {
   interests: string[];
   now: {
     building: string[];
-    learning: string[];
   };
   /** Textos de interfaz (títulos de sección, botones, formulario, etc.). */
   ui: {
@@ -238,7 +236,6 @@ export interface Profile {
     strengths: { strengths: string; languages: string; interests: string };
     now: {
       building: string;
-      learning: string;
       repos: string;
       reposEmpty: string;
       updated: string;

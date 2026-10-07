@@ -3,7 +3,6 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { SocialIcon } from "@/components/SocialIcon";
 import { ContactForm } from "@/components/ContactForm";
 import { CvButton } from "@/components/CvButton";
-import { FloatingCodeBackground } from "@/components/FloatingCodeBackground";
 import type { Profile } from "@/content/types";
 
 const linkClass =
@@ -15,7 +14,6 @@ export function Contact({ profile }: { profile: Profile }) {
 
   return (
     <section id="contacto" aria-labelledby="contacto-title" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border bg-surface3/50 py-24">
-      <FloatingCodeBackground density="low" opacity="subtle" variant="contact" />
       <div className="relative z-10 mx-auto max-w-6xl px-6">
         <SectionHeading id="contacto-title" {...ui.sections.contact} className="mb-6" />
         <p className="reveal mb-10 max-w-2xl text-sm leading-relaxed text-muted-foreground">{ui.contact.intro}</p>

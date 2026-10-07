@@ -46,7 +46,7 @@ export default async function CvPage({ params }: PageProps<"/[lang]/cv">) {
       <article className="cv-sheet mx-auto max-w-[8.5in] bg-white px-10 py-9 font-sans text-[12.5px] leading-snug text-neutral-900 shadow-2xl print:max-w-none print:px-0 print:py-0 print:shadow-none">
         <header>
           <h1 className="text-[26px] font-bold leading-tight text-neutral-950">{p.person.name}</h1>
-          <p className="mt-0.5 text-[13.5px] font-semibold text-[#4b3fc4]">{p.hero.subtitle}</p>
+          <p className="mt-0.5 text-[13.5px] font-semibold text-[#0e6b6b]">{p.hero.subtitle}</p>
           <p className="mt-1.5 text-neutral-700">
             {p.person.location} · <a href={`mailto:${p.person.email}`} className="underline">{p.person.email}</a> · <a href={`tel:${p.person.phone}`}>{p.person.phone}</a>
           </p>

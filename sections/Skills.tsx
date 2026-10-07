@@ -1,6 +1,5 @@
 import { Code2, Database, Server, ShieldCheck, Wrench } from "lucide-react";
 import { Marquee } from "@/components/Marquee";
-import { ParticleBackground } from "@/components/ParticleBackground";
 import { SectionHeading } from "@/components/SectionHeading";
 import { PLACEHOLDER_RE } from "@/content/derived";
 import type { Profile, SkillCategory } from "@/content/types";
@@ -21,7 +20,6 @@ export function Skills({ profile }: { profile: Profile }) {
 
   return (
     <section id="stack" aria-labelledby="stack-title" className="relative isolate scroll-mt-24 overflow-hidden border-t border-border bg-surface2/40 py-24">
-      <ParticleBackground density="medium" />
       <div className="relative z-10 mx-auto max-w-6xl px-6">
         <SectionHeading id="stack-title" {...ui.sections.stack} />
 
@@ -31,12 +29,12 @@ export function Skills({ profile }: { profile: Profile }) {
           {categories.map((category) => {
             const Icon = ICONS[category.icon];
             return (
-              <li key={category.category} className="reveal rounded-2xl border border-border bg-card p-6">
+              <li key={category.category} className="reveal rounded-xl border border-border bg-card p-6">
                 <Icon aria-hidden="true" className="h-6 w-6 text-accent" />
                 <h3 className="mt-4 text-sm font-semibold text-foreground">{category.category}</h3>
                 <ul className="mt-4 flex flex-wrap gap-2">
                   {category.skills.map((skill) => (
-                    <li key={skill} className="rounded-full border border-border bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">
+                    <li key={skill} className="rounded border border-border bg-muted/60 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
                       {skill}
                     </li>
                   ))}

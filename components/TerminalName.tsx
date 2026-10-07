@@ -6,28 +6,34 @@ const CHAR_INTERVAL_S = 0.055;
 /**
  * Nombre con efecto de tecleo, solo CSS: el texto completo llega en el HTML SSR
  * (crawlers, previews y lectores sin JS) y cada carácter aparece con un retraso escalonado.
+ * Cada palabra va en su propia línea; el espacio real entre ellas se conserva en el texto.
  * Con prefers-reduced-motion se muestra completo de inmediato (ver .type-char en globals.css).
  */
 export function TerminalName({ text, className }: { text: string; className?: string }) {
-  const chars = Array.from(text);
+  const words = text.split(" ");
+  let index = 0;
 
   return (
     <h1 aria-label={text} className={cn(className)}>
-      <span aria-hidden="true" className="text-gradient-hero">
-        {chars.map((char, i) => (
-          <span
-            key={i}
-            className="type-char"
-            style={{ animationDelay: `${START_DELAY_S + i * CHAR_INTERVAL_S}s` }}
-          >
-            {char}
+      {words.map((word, w) => {
+        const isLast = w === words.length - 1;
+        return (
+          <span key={word + w} aria-hidden="true" className="block">
+            {Array.from(word).map((char) => {
+              const delay = START_DELAY_S + index++ * CHAR_INTERVAL_S;
+              return (
+                <span key={index} className="type-char" style={{ animationDelay: `${delay}s` }}>
+                  {char}
+                </span>
+              );
+            })}
+            {isLast && (
+              <span className="ml-[0.06em] inline-block h-[0.72em] w-[0.09em] animate-blink bg-accent align-baseline motion-reduce:animate-none" />
+            )}
+            {!isLast && " "}
           </span>
-        ))}
-      </span>
-      <span
-        aria-hidden="true"
-        className="ml-1 inline-block h-[0.85em] w-[3px] translate-y-[0.1em] animate-blink bg-accent align-middle motion-reduce:animate-none"
-      />
+        );
+      })}
     </h1>
   );
 }

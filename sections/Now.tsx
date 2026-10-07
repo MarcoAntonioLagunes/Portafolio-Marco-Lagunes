@@ -1,4 +1,4 @@
-import { BookOpen, GitBranch, Hammer, Star } from "lucide-react";
+import { GitBranch, Hammer, Star } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
 import { WithPlaceholders } from "@/components/WithPlaceholders";
 import type { Profile } from "@/content/types";
@@ -7,7 +7,7 @@ import { GITHUB_URL } from "@/lib/site";
 
 function ListCard({ icon: Icon, title, items }: { icon: typeof Hammer; title: string; items: string[] }) {
   return (
-    <div className="reveal rounded-2xl border border-border bg-card p-6">
+    <div className="reveal rounded-xl border border-border bg-card p-6">
       <div className="flex items-center gap-3">
         <Icon aria-hidden="true" className="h-5 w-5 text-accent" />
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
@@ -15,7 +15,7 @@ function ListCard({ icon: Icon, title, items }: { icon: typeof Hammer; title: st
       <ul className="mt-4 space-y-3">
         {items.map((item) => (
           <li key={item} className="flex gap-2.5 text-sm leading-relaxed text-muted-foreground">
-            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-mint" />
+            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sonar" />
             <span>
               <WithPlaceholders text={item} />
             </span>
@@ -26,7 +26,7 @@ function ListCard({ icon: Icon, title, items }: { icon: typeof Hammer; title: st
   );
 }
 
-/** "Ahora mismo": qué construyo, qué aprendo y mis repos públicos más recientes (GitHub API en build, revalidate 24 h). */
+/** "Ahora mismo": qué construyo y mis repos públicos más recientes (GitHub API en build, revalidate 24 h). */
 export async function Now({ profile }: { profile: Profile }) {
   const { now, ui, locale } = profile;
   const t = ui.now;
@@ -38,9 +38,8 @@ export async function Now({ profile }: { profile: Profile }) {
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeading id="ahora-title" {...ui.sections.now} />
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6">
           <ListCard icon={Hammer} title={t.building} items={now.building} />
-          <ListCard icon={BookOpen} title={t.learning} items={now.learning} />
         </div>
 
         <div className="reveal mt-10">
@@ -53,7 +52,7 @@ export async function Now({ profile }: { profile: Profile }) {
               target="_blank"
               rel="noopener noreferrer"
               data-event="click_github"
-              className="rounded-sm text-sm text-lavender transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-sm text-sm text-beacon transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {t.viewProfile} →<span className="sr-only"> {ui.projects.opensInNewTab}</span>
             </a>
@@ -68,12 +67,12 @@ export async function Now({ profile }: { profile: Profile }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     data-event="click_github"
-                    className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition-colors hover:border-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-colors hover:border-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <span className="font-mono text-sm font-semibold text-foreground">{repo.name}</span>
                     {repo.description && <span className="mt-2 text-sm leading-relaxed text-muted-foreground">{repo.description}</span>}
                     <span className="mt-auto flex items-center gap-4 pt-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-                      {repo.language && <span className="text-mint">{repo.language}</span>}
+                      {repo.language && <span className="text-sonar">{repo.language}</span>}
                       {repo.stars > 0 && (
                         <span className="inline-flex items-center gap-1">
                           <Star aria-hidden="true" className="h-3 w-3" /> {repo.stars}

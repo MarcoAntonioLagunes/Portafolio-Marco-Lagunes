@@ -70,7 +70,7 @@ export const profileEn: Profile = {
     subtitle: "Full-Stack Developer · Data Science Master's Student",
     headline: "Building secure, production-ready software, end to end.",
     summary:
-      "Full-stack developer with a completed Computer Systems Engineering program and Cisco CCST Cybersecurity certification. I design and ship complete web applications — frontend, backend, databases, APIs and authentication — with security built in from day one. Right now I'm building a production platform used by real evaluators at a national merchant marine officers' association, while pursuing a Master's in Data Science.",
+      "Full-stack developer specialized in building complete web applications, from the interface and APIs to databases, authentication and deployment, with a security-by-design approach. I'm a Computer Systems Engineer with the Cisco CCST Cybersecurity certification. I'm currently building a production web platform used by evaluators at a national merchant marine association, while pursuing a Master's in Data Science to expand my profile into data analysis and artificial intelligence.",
     ctas: { projects: "View projects", cv: "Download résumé", contact: "Get in touch" },
     terminalTitle: "marco@portfolio:~",
     terminal: [
@@ -81,7 +81,6 @@ export const profileEn: Profile = {
       { cmd: "./available --mode", resp: "true ✓ Remote / Hybrid" },
     ],
     avatarAlt: "Marco Lagunes, Full-Stack Developer",
-    scrollCue: "Scroll",
   },
   metrics: [
     { value: `${leadershipYears}+`, label: "years leading teams" },
@@ -401,7 +400,6 @@ export const profileEn: Profile = {
       "The ASOMMMN résumé evaluation platform, in production.",
       "MKDevSoft, my software development venture for small businesses.",
     ],
-    learning: ["Master's in Data Science: [COMPLETAR: materias o temas de este periodo]"],
   },
   ui: {
     skipToContent: "Skip to content",
@@ -451,7 +449,6 @@ export const profileEn: Profile = {
     strengths: { strengths: "Strengths", languages: "Languages", interests: "Interests" },
     now: {
       building: "What I'm building",
-      learning: "What I'm learning",
       repos: "Recently updated public repos",
       reposEmpty: "See all my activity on GitHub.",
       updated: "Updated",

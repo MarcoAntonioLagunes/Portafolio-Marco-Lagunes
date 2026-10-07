@@ -32,12 +32,13 @@ const config: Config = {
         },
         surface2: "hsl(var(--surface-2) / <alpha-value>)",
         surface3: "hsl(var(--surface-3) / <alpha-value>)",
-        lavender: "hsl(var(--lavender) / <alpha-value>)",
-        mint: "hsl(var(--mint) / <alpha-value>)",
+        beacon: "hsl(var(--beacon) / <alpha-value>)",
+        sonar: "hsl(var(--sonar) / <alpha-value>)",
         ring: "hsl(var(--ring) / <alpha-value>)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
         mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       keyframes: {
@@ -65,13 +66,11 @@ const config: Config = {
         rise: "rise 0.6s ease-out both",
         marquee: "marquee 26s linear infinite",
         "float-y": "float-y 4s ease-in-out infinite",
-        "blob-drift": "blob-drift 16s ease-in-out infinite",
-        "blob-drift-slow": "blob-drift 22s ease-in-out infinite reverse",
         blink: "blink 1s step-end infinite",
       },
       backgroundImage: {
         "grid-glow":
-          "radial-gradient(circle at 50% 0%, hsl(var(--accent) / 0.15), transparent 60%)",
+          "radial-gradient(ellipse at 70% 0%, hsl(var(--sonar) / 0.10), transparent 60%)",
       },
     },
   },

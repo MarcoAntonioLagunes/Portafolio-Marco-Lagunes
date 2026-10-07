@@ -44,15 +44,15 @@ export function StatCounter({ value, label }: { value: string; label: string }) 
   }, [target]);
 
   return (
-    <div ref={ref} className="px-2 py-5 text-center sm:px-4 sm:py-6">
-      <p className="font-mono text-2xl font-semibold text-accent sm:text-3xl">
+    <div ref={ref}>
+      <p className="font-display text-4xl font-extrabold leading-none text-accent sm:text-5xl">
         <span className="sr-only">{value}</span>
         <span aria-hidden="true" className="tabular-nums">
           {display}
           {suffix}
         </span>
       </p>
-      <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">
+      <p className="mt-2 font-mono text-[10px] uppercase leading-snug tracking-widest text-muted-foreground sm:text-[11px]">
         {label}
       </p>
     </div>

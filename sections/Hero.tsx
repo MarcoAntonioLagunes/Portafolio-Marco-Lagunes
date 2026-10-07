@@ -1,56 +1,65 @@
+import { Bathymetry } from "@/components/Bathymetry";
 import { CvButton } from "@/components/CvButton";
 import { HeroAvatar } from "@/components/HeroAvatar";
-import { ScrollCue } from "@/components/ScrollCue";
 import { SocialIcon } from "@/components/SocialIcon";
 import { StatCounter } from "@/components/StatCounter";
 import { TerminalHero } from "@/components/TerminalHero";
 import { TerminalName } from "@/components/TerminalName";
 import { TypewriterText } from "@/components/TypewriterText";
-import { FloatingCodeBackground } from "@/components/FloatingCodeBackground";
 import type { Profile } from "@/content/types";
 import { publicFileExists } from "@/lib/public-files";
 
 const AVATAR_SRC = "/images/image.png";
+/** Boca del Río, Veracruz. */
+const COORDINATES = "19°06′N · 96°06′W";
 
-const secondaryButton =
-  "flex items-center gap-2 rounded-full border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-all duration-300 hover:scale-[1.04] hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] motion-reduce:hover:scale-100";
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const secondaryButton = `flex items-center gap-2 rounded-md border border-border bg-background/40 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur-sm transition-colors duration-200 hover:border-accent hover:text-accent ${focusRing}`;
 
 export function Hero({ profile }: { profile: Profile }) {
   const { person, hero, metrics, socials } = profile;
 
   return (
-    <section id="sobre-mi" className="relative isolate flex min-h-screen flex-col overflow-hidden pb-12 pt-24 md:pb-64">
-      {/* Fondo decorativo */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-grid-glow" />
-      <FloatingCodeBackground density="high" variant="hero" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="hero-blob -left-24 -top-16 h-72 w-72 animate-blob-drift bg-accent/25 sm:h-96 sm:w-96" />
-        <div className="hero-blob -right-32 top-1/3 h-64 w-64 animate-blob-drift-slow bg-mint/15 sm:h-80 sm:w-80" />
-        <div className="hero-blob bottom-[-6rem] left-1/4 h-56 w-56 animate-blob-drift bg-lavender/15" />
-      </div>
+    <section id="sobre-mi" className="relative isolate flex min-h-[100svh] items-center overflow-hidden pb-16 pt-28 md:pb-20 md:pt-32">
+      {/* Carta batimétrica (decorativa). En mobile se desvanece para no competir con el texto. */}
+      <Bathymetry className="absolute inset-0 -z-10 h-full w-full text-sonar [mask-image:linear-gradient(to_bottom,black_60%,transparent)] max-md:opacity-60" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 px-6 py-12 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-20 md:py-16">
-        <div className="flex animate-rise flex-col items-center text-center md:items-start md:text-left">
-          <p className="inline-flex items-center gap-2 rounded-full border border-mint/40 bg-mint/10 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-mint">
-            <span aria-hidden="true" className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mint opacity-60 [animation-duration:2.4s] motion-reduce:animate-none" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-mint" />
-            </span>
-            {hero.badge}
+      <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:items-center md:gap-12">
+        <div className="animate-rise">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p className="inline-flex items-center gap-2 rounded-md border border-sonar/40 bg-sonar/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-widest text-sonar">
+              <span aria-hidden="true" className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sonar opacity-60 [animation-duration:2.4s] motion-reduce:animate-none" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-sonar" />
+              </span>
+              {hero.badge}
+            </p>
+            <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+              <span className="text-accent">⌖</span> {COORDINATES}
+              <span className="hidden sm:inline"> · {person.location.split(",")[0]}</span>
+            </p>
+          </div>
+
+          <TerminalName
+            text={person.name}
+            className="display mt-6 text-[clamp(4.5rem,15vw,9.5rem)] text-foreground [text-shadow:0_2px_40px_hsl(var(--background))]"
+          />
+
+          <p className="mt-6 flex max-w-xl items-start gap-3 font-mono text-xs uppercase leading-relaxed tracking-[0.18em] text-beacon">
+            <span aria-hidden="true" className="mt-[0.55em] h-px w-8 shrink-0 bg-accent" />
+            {hero.subtitle}
           </p>
 
-          <TerminalName text={person.name} className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl" />
+          <TypewriterText text={hero.headline} className="mt-6 max-w-xl text-xl font-semibold leading-snug text-foreground sm:text-2xl" />
 
-          <p className="mt-3 max-w-xl font-mono text-xs uppercase tracking-widest text-accent sm:text-sm">{hero.subtitle}</p>
+          <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">{hero.summary}</p>
 
-          <TypewriterText text={hero.headline} className="mt-6 max-w-xl text-lg font-medium text-foreground sm:text-xl" />
-
-          <p className="mt-6 max-w-xl text-sm leading-relaxed text-muted-foreground">{hero.summary}</p>
-
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 md:justify-start">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href="#proyectos"
-              className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-300 hover:scale-[1.04] hover:bg-accent/90 hover:shadow-[0_0_24px_-2px_hsl(var(--accent)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] motion-reduce:hover:scale-100"
+              className={`rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-[background-color,box-shadow] duration-200 hover:bg-beacon hover:shadow-[0_0_32px_-6px_hsl(var(--accent)/0.7)] ${focusRing}`}
             >
               {hero.ctas.projects}
             </a>
@@ -58,48 +67,42 @@ export function Hero({ profile }: { profile: Profile }) {
             <a href="#contacto" className={secondaryButton}>
               {hero.ctas.contact}
             </a>
+            <ul className="flex items-center gap-1 sm:ml-2">
+              {socials.map((link) => {
+                const external = link.href.startsWith("http");
+                return (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      aria-label={link.label}
+                      data-event={link.event}
+                      target={external ? "_blank" : undefined}
+                      rel={external ? "noopener noreferrer" : undefined}
+                      className="flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <SocialIcon icon={link.icon} className="h-5 w-5" />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
 
-          <ul className="mt-8 flex items-center justify-center gap-3 md:justify-start">
-            {socials.map((link) => {
-              const external = link.href.startsWith("http");
-              return (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    aria-label={link.label}
-                    data-event={link.event}
-                    target={external ? "_blank" : undefined}
-                    rel={external ? "noopener noreferrer" : undefined}
-                    className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <SocialIcon icon={link.icon} className="h-5 w-5" />
-                  </a>
-                </li>
-              );
-            })}
+          <ul className="mt-10 grid max-w-xl grid-cols-3 gap-4 border-t border-border pt-6">
+            {metrics.map((stat) => (
+              <li key={stat.label}>
+                <StatCounter value={stat.value} label={stat.label} />
+              </li>
+            ))}
           </ul>
+        </div>
 
-          <div className="mt-10 flex w-full justify-center md:justify-start">
+        <div className="order-first flex flex-col items-start md:order-none md:items-center">
+          <HeroAvatar src={publicFileExists(AVATAR_SRC) ? AVATAR_SRC : undefined} alt={hero.avatarAlt} className="ml-5 mt-5 w-28 sm:w-36 md:ml-0 md:mt-0 md:w-64 lg:w-72" />
+          <div className="mt-14 hidden w-full justify-center md:flex">
             <TerminalHero lines={hero.terminal} title={hero.terminalTitle} />
           </div>
         </div>
-
-        <div className="flex justify-center md:justify-end">
-          <HeroAvatar src={publicFileExists(AVATAR_SRC) ? AVATAR_SRC : undefined} alt={hero.avatarAlt} />
-        </div>
-      </div>
-
-      <ScrollCue label={hero.scrollCue} className="absolute inset-x-0 bottom-48 hidden text-center md:block" />
-
-      <div className="relative z-10 mt-12 border-y border-border bg-surface2/70 py-2 backdrop-blur-sm md:absolute md:inset-x-0 md:bottom-0 md:mt-0">
-        <ul className="mx-auto grid w-full max-w-4xl grid-cols-3 divide-x divide-border px-6">
-          {metrics.map((stat) => (
-            <li key={stat.label}>
-              <StatCounter value={stat.value} label={stat.label} />
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );

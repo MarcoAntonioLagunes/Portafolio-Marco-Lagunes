@@ -70,7 +70,7 @@ export const profileEs: Profile = {
     subtitle: "Full-Stack Developer · Estudiante de Maestría en Ciencia de Datos",
     headline: "Construyendo software seguro y listo para producción, de principio a fin.",
     summary:
-      "Desarrollador full-stack con la carrera de Ingeniería en Sistemas Computacionales concluida y certificación Cisco CCST Cybersecurity. Diseño y despliego aplicaciones web completas — frontend, backend, bases de datos, APIs y autenticación — con foco en seguridad desde el diseño. Hoy construyo una plataforma en producción, usada por evaluadores reales de una asociación nacional de la marina mercante, y curso la Maestría en Ciencia de Datos.",
+      "Desarrollador Full-Stack especializado en construir aplicaciones web completas, desde la interfaz y las APIs hasta bases de datos, autenticación y despliegue, con un enfoque de seguridad desde el diseño. Soy Ingeniero en Sistemas Computacionales y cuento con la certificación Cisco CCST Cybersecurity. Actualmente desarrollo una plataforma web en producción utilizada por evaluadores de una asociación nacional del sector de la marina mercante, mientras curso una Maestría en Ciencia de Datos para ampliar mi perfil hacia el análisis de datos y la Inteligencia Artificial.",
     ctas: { projects: "Ver proyectos", cv: "Descargar CV", contact: "Contactarme" },
     terminalTitle: "marco@portfolio:~",
     terminal: [
@@ -81,7 +81,6 @@ export const profileEs: Profile = {
       { cmd: "./disponible --modalidad", resp: "true ✓ Remoto / Híbrido" },
     ],
     avatarAlt: "Marco Lagunes, Full-Stack Developer",
-    scrollCue: "Desplázate",
   },
   metrics: [
     { value: `${leadershipYears}+`, label: "años liderando equipos" },
@@ -424,7 +423,6 @@ export const profileEs: Profile = {
       "La plataforma de evaluación de CVs de ASOMMMN, en producción.",
       "MKDevSoft, mi iniciativa de desarrollo de software para pymes.",
     ],
-    learning: ["Maestría en Ciencia de Datos: [COMPLETAR: materias o temas de este periodo]"],
   },
   ui: {
     skipToContent: "Saltar al contenido",
@@ -474,7 +472,6 @@ export const profileEs: Profile = {
     strengths: { strengths: "Fortalezas", languages: "Idiomas", interests: "Intereses" },
     now: {
       building: "Qué estoy construyendo",
-      learning: "Qué estoy aprendiendo",
       repos: "Repos públicos recientes",
       reposEmpty: "Mira mi actividad completa en GitHub.",
       updated: "Actualizado",

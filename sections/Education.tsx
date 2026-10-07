@@ -16,7 +16,7 @@ export function Education({ profile }: { profile: Profile }) {
               <li
                 key={item.degree}
                 className={cn(
-                  "reveal flex gap-4 rounded-2xl border bg-card p-6",
+                  "reveal flex gap-4 rounded-xl border bg-card p-6",
                   inProgress ? "border-accent/50 shadow-[0_0_36px_-16px_hsl(var(--accent)/0.6)]" : "border-border",
                 )}
               >
@@ -25,11 +25,11 @@ export function Education({ profile }: { profile: Profile }) {
                   {item.badge && (
                     <span
                       className={cn(
-                        "mb-3 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest",
-                        inProgress ? "border-mint/40 bg-mint/10 text-mint" : "border-border bg-muted text-muted-foreground",
+                        "mb-3 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest",
+                        inProgress ? "border-sonar/40 bg-sonar/10 text-sonar" : "border-border bg-muted text-muted-foreground",
                       )}
                     >
-                      {inProgress && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-mint" />}
+                      {inProgress && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-sonar" />}
                       {item.badge}
                     </span>
                   )}

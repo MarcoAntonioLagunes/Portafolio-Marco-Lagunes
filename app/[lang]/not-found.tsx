@@ -15,7 +15,7 @@ export default function NotFound() {
               <p className="mt-2 text-sm text-muted-foreground">{ui.notFound.body}</p>
               <Link
                 href={homePath(locale)}
-                className="mt-4 inline-flex rounded-full border border-border px-5 py-2 text-sm font-medium text-foreground transition-colors hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="mt-4 inline-flex rounded-md border border-border px-5 py-2 text-sm font-medium text-foreground transition-colors hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {ui.notFound.back}
               </Link>

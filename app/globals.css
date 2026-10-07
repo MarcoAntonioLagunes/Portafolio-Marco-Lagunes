@@ -4,22 +4,23 @@
 
 @layer base {
   :root {
-    --background: 220 43% 4%;
-    --foreground: 210 40% 98%;
-    --surface-2: 218 42% 9%;
-    --surface-3: 218 38% 11%;
-    --card: 218 42% 9%;
-    --card-foreground: 210 40% 98%;
-    --border: 218 28% 18%;
-    --muted: 218 26% 15%;
-    --muted-foreground: 215 20% 65%;
-    --navy: 218 45% 14%;
-    --navy-foreground: 210 40% 98%;
-    --accent: 247 65% 66%;
-    --accent-foreground: 220 43% 7%;
-    --lavender: 249 69% 81%;
-    --mint: 163 65% 66%;
-    --ring: 247 65% 66%;
+    /* Carta náutica: abismo, casco, espuma y bruma; ámbar de faro como acento y sonar para "en producción". */
+    --background: 198 56% 6%;
+    --foreground: 165 22% 93%;
+    --surface-2: 198 52% 9%;
+    --surface-3: 197 49% 11%;
+    --card: 198 50% 10%;
+    --card-foreground: 165 22% 93%;
+    --border: 196 38% 18%;
+    --muted: 196 44% 14%;
+    --muted-foreground: 191 15% 66%;
+    --navy: 198 50% 13%;
+    --navy-foreground: 165 22% 93%;
+    --accent: 36 100% 64%;
+    --accent-foreground: 198 56% 6%;
+    --beacon: 38 100% 79%;
+    --sonar: 174 59% 56%;
+    --ring: 36 100% 64%;
   }
 
   * {
@@ -36,6 +37,7 @@
     overflow-x: hidden;
   }
 
+  /* Profundidad: el agua se oscurece hacia abajo, con un reflejo frío en la superficie. */
   body::before {
     content: "";
     position: fixed;
@@ -43,26 +45,18 @@
     z-index: -2;
     pointer-events: none;
     background:
-      radial-gradient(
-        circle at 50% -10%,
-        hsl(var(--accent) / 0.07),
-        transparent 34%
-      ),
-      linear-gradient(
-        to bottom,
-        hsl(var(--background) / 0.78),
-        hsl(var(--background) / 0.93)
-      );
+      radial-gradient(ellipse 70% 45% at 85% -5%, hsl(var(--sonar) / 0.07), transparent 70%),
+      linear-gradient(to bottom, hsl(var(--surface-2)), hsl(var(--background)) 40%);
   }
 
   ::selection {
-    background: hsl(var(--accent) / 0.28);
+    background: hsl(var(--accent) / 0.3);
     color: hsl(var(--foreground));
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--accent) / 0.55) transparent;
+    scrollbar-color: hsl(var(--accent) / 0.5) transparent;
   }
 
   ::-webkit-scrollbar {
@@ -75,7 +69,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--accent) / 0.45);
+    background: hsl(var(--accent) / 0.4);
     border-radius: 9999px;
     border: 2px solid hsl(var(--background));
   }
@@ -86,78 +80,46 @@
 }
 
 @layer components {
-  .text-gradient-hero {
-    background-image: linear-gradient(
-      to bottom right,
-      hsl(var(--foreground)),
-      hsl(var(--lavender))
-    );
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
+  /* Títulos en Big Shoulders: condensada industrial, como la señalética de un puerto. */
+  .display {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.005em;
+    line-height: 0.88;
   }
 
-  .avatar-ring-conic {
-    background: conic-gradient(#7c6fe0, #40c8e0, #e040a0, #7c6fe0);
-    animation: ring-spin 8s linear infinite;
-    box-shadow: 0 0 20px rgba(124, 111, 224, 0.3);
+  /* Curvas batimétricas del hero: se trazan al cargar, de la costa hacia lo profundo. */
+  .bathymetry path {
+    fill: none;
+    stroke: currentColor;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    animation: chart-draw 2.6s cubic-bezier(0.33, 0, 0.2, 1) both;
   }
 
-  .avatar-ring-dotted {
-    border: 2px dotted hsl(var(--accent) / 0.4);
-    animation: ring-spin-reverse 9s linear infinite;
-  }
-
-  .hero-blob {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(80px);
-    pointer-events: none;
-  }
-
-  .particle-cursor-glow {
-    width: min(44rem, 62vw);
-    aspect-ratio: 1;
-    border-radius: 9999px;
-    will-change: transform;
-    background: radial-gradient(
-      circle,
-      hsl(var(--accent) / 0.13) 0%,
-      hsl(var(--accent) / 0.065) 28%,
-      transparent 70%
-    );
-    filter: blur(10px);
-    transition: opacity 300ms ease;
-  }
-
-  .floating-code {
-    position: absolute;
-    max-width: 18rem;
-    color: hsl(var(--lavender));
+  .bathymetry text {
     font-family: var(--font-jetbrains-mono), monospace;
-    line-height: 1.5;
-    white-space: nowrap;
-    opacity: 0.13;
-    animation: floating-code-drift 24s ease-in-out infinite alternate;
+    fill: currentColor;
+    animation: gallery-fade-in 0.8s ease-out 1.6s both;
   }
 
-  .floating-code::before {
-    content: attr(data-code);
-  }
-
-  .floating-code-layer[data-paused] .floating-code {
-    animation-play-state: paused;
-  }
-
-  .floating-code-subtle {
-    opacity: 0.07;
+  /* Pulso de sonar alrededor de la foto. */
+  .sonar-ping {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--sonar) / 0.55);
+    animation: sonar-ping 4.8s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
   }
 
   .logo-mark {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid hsl(var(--accent) / 0.45);
     background: hsl(var(--navy));
     color: hsl(var(--accent));
     font-family: var(--font-jetbrains-mono), monospace;
@@ -169,17 +131,17 @@
     content: "ML";
   }
 
-  /* Nombre gigante con barrido de gradiente en el footer (antes en styled-jsx). */
+  /* Nombre gigante del footer: contorno con un destello de faro que lo recorre. */
   .footer-sweep-name {
-    font-size: clamp(52px, 10vw, 96px);
-    background: linear-gradient(90deg, transparent 0%, transparent 15%, #e040a0 32%, #7c6fe0 50%, #40c8e0 68%, transparent 85%, transparent 100%);
+    font-size: clamp(64px, 16vw, 220px);
+    background: linear-gradient(90deg, transparent 0%, transparent 30%, hsl(var(--accent)) 46%, hsl(var(--beacon)) 50%, hsl(var(--accent)) 54%, transparent 70%, transparent 100%);
     background-size: 300% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    animation: footer-sweep 7s ease-in-out infinite;
-    opacity: 0.18;
+    -webkit-text-stroke: 1px hsl(var(--border));
+    animation: footer-sweep 9s ease-in-out infinite;
   }
 
   /* Cursor personalizado (CustomCursor). El cursor nativo se conserva en campos de texto. */
@@ -196,21 +158,21 @@
     z-index: 9999;
     pointer-events: none;
     border-radius: 9999px;
-    background: #7c6fe0;
     opacity: 0;
     will-change: transform;
     transition: opacity 200ms ease, scale 200ms ease-out;
   }
 
   .custom-cursor-dot {
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 0.4rem;
+    height: 0.4rem;
+    background: hsl(var(--accent));
   }
 
   .custom-cursor-ring {
     width: 2rem;
     height: 2rem;
-    box-shadow: 0 0 24px 6px rgba(124, 111, 224, 0.45);
+    border: 1px solid hsl(var(--accent));
   }
 
   body[data-cursor-visible] .custom-cursor-dot {
@@ -218,11 +180,11 @@
   }
 
   body[data-cursor-visible] .custom-cursor-ring {
-    opacity: 0.18;
+    opacity: 0.35;
   }
 
   body[data-cursor-visible] .custom-cursor-ring.is-hovering {
-    opacity: 0.35;
+    opacity: 0.8;
     scale: 1.5;
   }
 
@@ -270,78 +232,6 @@
     display: inline-block;
     animation: word-reveal-in 0.4s ease-out both;
   }
-
-  .skill-chip {
-    --skill-color: 96 165 250;
-
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-    overflow: hidden;
-    border-radius: 9999px;
-    border: 1px solid hsl(var(--border));
-    background: hsl(var(--card) / 0.75);
-    padding: 0.65rem 1rem;
-    color: hsl(var(--muted-foreground));
-    transition:
-      transform 220ms ease,
-      border-color 220ms ease,
-      background-color 220ms ease,
-      color 220ms ease,
-      box-shadow 220ms ease;
-  }
-
-  .skill-chip::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      circle at center,
-      rgb(var(--skill-color) / 0.16),
-      transparent 68%
-    );
-    transition: opacity 220ms ease;
-  }
-
-  .skill-chip:hover {
-    transform: translateY(-2px) scale(1.035);
-    border-color: rgb(var(--skill-color) / 0.48);
-    background: rgb(var(--skill-color) / 0.075);
-    color: rgb(var(--skill-color));
-    box-shadow:
-      0 0 0 1px rgb(var(--skill-color) / 0.08),
-      0 0 28px -8px rgb(var(--skill-color) / 0.62);
-  }
-
-  .skill-chip:hover::before {
-    opacity: 1;
-  }
-
-  .skill-chip-icon {
-    position: relative;
-    z-index: 1;
-    color: rgb(var(--skill-color));
-    filter: grayscale(1);
-    opacity: 0.62;
-    transition:
-      filter 220ms ease,
-      opacity 220ms ease,
-      transform 220ms ease;
-  }
-
-  .skill-chip:hover .skill-chip-icon {
-    filter: grayscale(0);
-    opacity: 1;
-    transform: scale(1.1);
-  }
-
-  .skill-chip-label {
-    position: relative;
-    z-index: 1;
-  }
 }
 
 @layer utilities {
@@ -351,18 +241,6 @@
 
   .text-balance {
     text-wrap: balance;
-  }
-}
-
-@keyframes ring-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes ring-spin-reverse {
-  to {
-    transform: rotate(-360deg);
   }
 }
 
@@ -376,17 +254,14 @@
   }
 }
 
-@keyframes blob-drift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(4%, -6%) scale(1.08);
-  }
-  66% {
-    transform: translate(-3%, 4%) scale(0.95);
-  }
+@keyframes chart-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes sonar-ping {
+  0% { transform: scale(1); opacity: 0.9; }
+  70%, 100% { transform: scale(1.75); opacity: 0; }
 }
 
 /*
@@ -444,9 +319,7 @@ main#top > section:not(:first-of-type) {
 
 @keyframes footer-sweep {
   0% { background-position: 120% 0; }
-  45% { background-position: 0% 0; opacity: 0.22; }
-  65% { background-position: -10% 0; opacity: 0.22; }
-  100% { background-position: -120% 0; opacity: 0.18; }
+  100% { background-position: -120% 0; }
 }
 
 @keyframes boot-progress {
@@ -474,18 +347,6 @@ main#top > section:not(:first-of-type) {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes floating-code-drift {
-  0% { transform: translate3d(-1rem, 0, 0) rotate(-1deg); opacity: 0.03; }
-  45% { opacity: 0.14; }
-  100% { transform: translate3d(1.5rem, -2.75rem, 0) rotate(1deg); opacity: 0.05; }
-}
-
-@media (hover: none), (pointer: coarse) {
-  .particle-cursor-glow {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -496,17 +357,14 @@ main#top > section:not(:first-of-type) {
   .animate-rise,
   .type-char,
   .word-reveal,
-  .gallery-slide {
+  .gallery-slide,
+  .bathymetry path,
+  .bathymetry text {
     animation: none !important;
   }
 
-  .particle-cursor-glow {
+  .sonar-ping {
     display: none;
-  }
-
-  .skill-chip,
-  .skill-chip-icon {
-    transition: none;
   }
 
   /* Duraciones mínimas (no "none"): animationend/transitionend deben dispararse para cerrar el intro. */
@@ -521,24 +379,14 @@ main#top > section:not(:first-of-type) {
     transform: none;
   }
 
-  .avatar-ring-conic,
-  .avatar-ring-dotted,
-  .footer-sweep-name,
-  .hero-blob,
-  .floating-code {
+  .footer-sweep-name {
     animation: none !important;
+    background: none;
   }
-
-  .floating-code { opacity: 0.055; }
 
   .marquee-copy { display: none; }
   .marquee-track { width: auto; }
   .marquee-list { flex-wrap: wrap; justify-content: center; padding-right: 0; }
-}
-
-/* En mobile el fondo de código casi no se ve y su costo de estilo/animación retrasa el LCP: se omite. */
-@media (max-width: 639px) {
-  .floating-code-layer { display: none; }
 }
 
 /* CV imprimible (/es/cv, /en/cv): solo la hoja, sin navegación ni decoraciones. */

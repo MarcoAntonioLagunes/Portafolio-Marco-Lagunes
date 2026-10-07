@@ -108,11 +108,11 @@ function DiagramSvg({ diagram, orientation, labelledBy, className }: { diagram: 
           return (
             <g key={node.id}>
               <rect x={box.x} y={box.y} width={box.w} height={box.h} rx="12" fill="hsl(var(--muted))" stroke="hsl(var(--border))" />
-              <text x={box.x + box.w / 2} y={box.y + (node.detail ? 31 : box.h / 2 + 5)} textAnchor="middle" fill="hsl(var(--foreground))" fontSize={14 * fontScale} fontWeight="600" fontFamily="var(--font-inter), sans-serif">
+              <text x={box.x + box.w / 2} y={box.y + (node.detail ? 31 : box.h / 2 + 5)} textAnchor="middle" fill="hsl(var(--foreground))" fontSize={14 * fontScale} fontWeight="600" fontFamily="var(--font-sans), sans-serif">
                 {node.label}
               </text>
               {node.detail && (
-                <text x={box.x + box.w / 2} y={box.y + 52} textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize={11 * fontScale} fontFamily="var(--font-inter), sans-serif">
+                <text x={box.x + box.w / 2} y={box.y + 52} textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize={11 * fontScale} fontFamily="var(--font-sans), sans-serif">
                   {node.detail.length > 34 ? `${node.detail.slice(0, 33)}…` : node.detail}
                 </text>
               )}
@@ -129,7 +129,7 @@ function DiagramSvg({ diagram, orientation, labelledBy, className }: { diagram: 
         const { lx, ly } = edgePath(a, b, orientation);
         const lines = splitLabel(edge.label, orientation === "horizontal" ? 14 : 30);
         return (
-          <text key={`label-${edge.from}-${edge.to}`} x={lx} y={ly - 6 - (lines.length - 1) * 12} textAnchor="middle" fill="hsl(var(--lavender))" fontSize={10.5 * fontScale} fontFamily="var(--font-jetbrains-mono), monospace" paintOrder="stroke" stroke="hsl(var(--card))" strokeWidth="4">
+          <text key={`label-${edge.from}-${edge.to}`} x={lx} y={ly - 6 - (lines.length - 1) * 12} textAnchor="middle" fill="hsl(var(--beacon))" fontSize={10.5 * fontScale} fontFamily="var(--font-jetbrains-mono), monospace" paintOrder="stroke" stroke="hsl(var(--card))" strokeWidth="4">
             {lines.map((line, i) => (
               <tspan key={i} x={lx} dy={i === 0 ? 0 : 12}>
                 {line}
@@ -150,7 +150,7 @@ function DiagramSvg({ diagram, orientation, labelledBy, className }: { diagram: 
 export function ArchitectureDiagram({ diagram, id, label }: { diagram: Diagram; id: string; label: string }) {
   const titleId = `${id}-title`;
   return (
-    <figure className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+    <figure className="rounded-xl border border-border bg-card p-4 sm:p-6">
       <span id={titleId} className="sr-only">{label}</span>
       <DiagramSvg diagram={diagram} orientation="horizontal" labelledBy={titleId} className="hidden h-auto w-full md:block" />
       <DiagramSvg diagram={diagram} orientation="vertical" labelledBy={titleId} className="mx-auto h-auto w-full max-w-sm md:hidden" />

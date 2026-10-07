@@ -50,19 +50,19 @@ export function ProjectCard({
         ref={ref}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="project-card group flex h-full flex-col justify-between rounded-2xl border border-border bg-card p-6 hover:border-accent/50 hover:shadow-[0_0_36px_-10px_hsl(var(--accent)/0.55)]"
+        className="project-card group flex h-full flex-col justify-between rounded-xl border border-border bg-card p-6 hover:border-accent/50 hover:shadow-[0_0_36px_-10px_hsl(var(--accent)/0.55)]"
       >
         <div>
           <span
             className={
-              "mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest " +
-              (isProduction ? "border-mint/40 bg-mint/10 text-mint" : "border-border bg-muted text-muted-foreground")
+              "mb-4 inline-flex w-fit items-center gap-1.5 rounded-md border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest " +
+              (isProduction ? "border-sonar/40 bg-sonar/10 text-sonar" : "border-border bg-muted text-muted-foreground")
             }
           >
             {isProduction && (
               <span aria-hidden="true" className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mint opacity-75 motion-reduce:animate-none" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-mint" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sonar opacity-75 motion-reduce:animate-none" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-sonar" />
               </span>
             )}
             {strings.status}
@@ -99,7 +99,7 @@ export function ProjectCard({
         <div className="mt-6">
           <ul className="flex flex-wrap gap-2">
             {project.stack.map((tech) => (
-              <li key={tech} className="rounded-full border border-border bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">
+              <li key={tech} className="rounded border border-border bg-muted/60 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
                 {tech}
               </li>
             ))}

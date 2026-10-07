@@ -120,14 +120,14 @@ export function ContactForm({ t, locale }: { t: ContactStrings; locale: Locale }
       <button
         type="submit"
         disabled={status === "sending"}
-        className="mt-2 w-fit rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-300 hover:scale-[1.04] hover:bg-accent/90 hover:shadow-[0_0_24px_-2px_hsl(var(--accent)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:opacity-60 disabled:hover:scale-100"
+        className="mt-2 w-fit rounded-md bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-all duration-200 hover:bg-beacon hover:shadow-[0_0_32px_-6px_hsl(var(--accent)/0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
       >
         {status === "sending" ? t.sending : t.send}
       </button>
 
       <div role="status" aria-live="polite" className="min-h-[1.25rem] text-sm">
         {status === "success" && (
-          <p className="text-mint">{t.success}</p>
+          <p className="text-sonar">{t.success}</p>
         )}
         {status === "error" && (
           <p className="text-red-300">{t.error}</p>

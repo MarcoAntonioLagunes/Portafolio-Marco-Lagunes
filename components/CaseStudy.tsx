@@ -32,7 +32,7 @@ function Bullets({ items }: { items: string[] }) {
 }
 
 const pillLink =
-  "inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "inline-flex items-center gap-2 rounded-md border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-accent hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 /** Página de caso de estudio. `homePath` y `projectPath` permiten reutilizarla por idioma. */
 export function CaseStudy({
@@ -65,14 +65,14 @@ export function CaseStudy({
         <header className="mt-8">
           <span
             className={
-              "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest " +
-              (isProduction ? "border-mint/40 bg-mint/10 text-mint" : "border-border bg-muted text-muted-foreground")
+              "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest " +
+              (isProduction ? "border-sonar/40 bg-sonar/10 text-sonar" : "border-border bg-muted text-muted-foreground")
             }
           >
-            {isProduction && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-mint" />}
+            {isProduction && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-sonar" />}
             {ui.projects.status[project.status]}
           </span>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-gradient-hero sm:text-5xl">{project.title}</h1>
+          <h1 className="display mt-4 text-[clamp(3rem,8vw,5.5rem)] text-foreground">{project.title}</h1>
           <p className="mt-2 text-lg text-accent">{project.subtitle}</p>
           <p className="mt-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
             {t.period}: {project.period}
@@ -109,7 +109,7 @@ export function CaseStudy({
           <Block id="decisiones" title={t.decisions}>
             <div className="grid gap-4 md:grid-cols-2">
               {cs.decisions.map((decision) => (
-                <div key={decision.title} className="rounded-2xl border border-border bg-card p-5">
+                <div key={decision.title} className="rounded-xl border border-border bg-card p-5">
                   <h3 className="text-sm font-semibold text-foreground">{decision.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     <WithPlaceholders text={decision.body} />
@@ -130,7 +130,7 @@ export function CaseStudy({
           <Block id="stack" title={t.stack}>
             <ul className="flex flex-wrap gap-2">
               {project.stack.map((tech) => (
-                <li key={tech} className="rounded-full border border-border bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">
+                <li key={tech} className="rounded border border-border bg-muted/60 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
                   {tech}
                 </li>
               ))}
@@ -160,7 +160,7 @@ export function CaseStudy({
         <nav aria-label={t.nextProject} className="mt-16 border-t border-border pt-10">
           <Link
             href={projectPath(next.slug)}
-            className="group flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group flex items-center justify-between gap-4 rounded-xl border border-border bg-card p-6 transition-colors hover:border-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <span>
               <span className="block font-mono text-xs uppercase tracking-widest text-muted-foreground">{t.nextProject}</span>

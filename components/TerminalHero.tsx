@@ -9,7 +9,7 @@ const PAUSE_BEFORE_RESPONSE_MS = 1200;
 const PAUSE_BEFORE_NEXT_MS = 2000;
 
 function Cursor() {
-  return <span className="inline-block animate-blink text-[#7C6FE0]">_</span>;
+  return <span className="inline-block animate-blink text-accent">_</span>;
 }
 
 /**
@@ -83,32 +83,32 @@ export function TerminalHero({ lines, title }: { lines: TerminalLine[]; title: s
   const shown = reduced ? lines : done;
 
   return (
-    <div ref={ref} aria-hidden="true" className="w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-[#0d1117]/90 shadow-2xl backdrop-blur-sm">
-      <div className="flex items-center gap-1.5 border-b border-white/10 bg-white/[0.03] px-4 py-2.5">
-        <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
-        <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
-        <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
-        <span className="ml-2 truncate font-mono text-[11px] text-white/60">{title}</span>
+    <div ref={ref} aria-hidden="true" className="w-full max-w-md overflow-hidden rounded-lg border border-border bg-card/85 shadow-2xl backdrop-blur-sm">
+      <div className="flex items-center gap-1.5 border-b border-border bg-background/40 px-4 py-2.5">
+        <span className="h-2.5 w-2.5 rounded-full bg-accent/80" />
+        <span className="h-2.5 w-2.5 rounded-full bg-border" />
+        <span className="h-2.5 w-2.5 rounded-full bg-border" />
+        <span className="ml-2 truncate font-mono text-[11px] text-muted-foreground">{title}</span>
       </div>
 
-      <div className="min-h-[250px] px-4 py-4 font-mono text-[13px] leading-relaxed sm:text-sm">
+      <div className="min-h-[230px] px-4 py-4 font-mono text-[13px] leading-relaxed">
         {shown.map((line, i) => (
           <div key={i} className="mb-2.5">
-            <p className="text-[#9d93f0]">
-              <span className="text-[#9d93f0]/70">$</span> {line.cmd}
+            <p className="text-foreground">
+              <span className="text-accent">$</span> {line.cmd}
             </p>
-            <p className="whitespace-pre-wrap text-emerald-400">{line.resp}</p>
+            <p className="whitespace-pre-wrap text-sonar">{line.resp}</p>
           </div>
         ))}
 
         {!reduced && (
           <div className="mb-2.5">
-            <p className="text-[#9d93f0]">
-              <span className="text-[#9d93f0]/70">$</span> {currentCmd}
+            <p className="text-foreground">
+              <span className="text-accent">$</span> {currentCmd}
               {phase === "cmd" && <Cursor />}
             </p>
             {phase === "resp" && (
-              <p className="whitespace-pre-wrap text-emerald-400">
+              <p className="whitespace-pre-wrap text-sonar">
                 {currentResp}
                 <Cursor />
               </p>

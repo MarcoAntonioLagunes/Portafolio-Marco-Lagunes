@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Big_Shoulders, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@/components/Analytics";
 import { BootIntro } from "@/components/BootIntro";
 import { CustomCursor } from "@/components/CustomCursor";
@@ -13,8 +13,15 @@ import { publicFileExists } from "@/lib/public-files";
 import { BOOT_SOUND_PATH, SITE_URL } from "@/lib/site";
 import "../globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const display = Big_Shoulders({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  display: "swap",
+});
+
+const sans = Hanken_Grotesk({
+  variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
@@ -66,7 +73,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 }
 
 export const viewport: Viewport = {
-  themeColor: "#06090F",
+  themeColor: "#071319",
   colorScheme: "dark",
 };
 
@@ -77,7 +84,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const other = LOCALES.find((l) => l !== lang)!;
 
   return (
-    <html lang={lang} className={`${inter.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased`}>
+    <html lang={lang} className={`${display.variable} ${sans.variable} ${jetbrainsMono.variable} h-full scroll-smooth antialiased`}>
       <body className="min-h-full bg-background text-foreground">
         <a
           href="#contenido"

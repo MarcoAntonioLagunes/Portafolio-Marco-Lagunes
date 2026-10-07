@@ -27,7 +27,7 @@ export function LanguageToggle({ current, target, label }: { current: Locale; ta
           window.location.href = `${href}${window.location.hash}`;
         }
       }}
-      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:border-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:border-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <Languages aria-hidden="true" className="h-3.5 w-3.5 text-accent" />
       <span aria-hidden="true">{target}</span>

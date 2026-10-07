@@ -17,12 +17,12 @@ function BrowserChrome({ mockUrl }: { mockUrl?: string }) {
   return (
     <div className="flex items-center gap-3 rounded-t-lg border border-b-0 border-border bg-surface2 px-3 py-2">
       <div className="flex gap-1.5" aria-hidden="true">
-        <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
+        <span className="h-2 w-2 rounded-full bg-accent/80" />
+        <span className="h-2 w-2 rounded-full bg-border" />
+        <span className="h-2 w-2 rounded-full bg-border" />
       </div>
       {mockUrl && (
-        <div className="flex-1 truncate rounded-full border border-border bg-muted px-3 py-0.5 text-center font-mono text-[10px] text-muted-foreground">
+        <div className="flex-1 truncate rounded border border-border bg-muted/60 px-3 py-0.5 text-center font-mono text-[10px] text-muted-foreground">
           {mockUrl}
         </div>
       )}
