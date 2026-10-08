@@ -7,18 +7,22 @@ const MOBILE_DUST = 60;
 const BOKEH_COUNT = 14;
 const MAX_SPARKLES = 7;
 const MOBILE_BREAKPOINT = 640;
-const CONSTELLATION_RADIUS = 140;
-const LINK_DISTANCE = 75;
+const CONSTELLATION_RADIUS = 160;
+const LINK_DISTANCE = 85;
 const CURSOR_LERP = 0.12;
+const MIN_CONSTELLATION_NODES = 8;
+const RING_RADIUS = 20;
 
 const GOLD_NEAR = "#FBD9A5";
 const GOLD_MID = "#F5B041";
-const GOLD_FAR = "#C98A2E";
+const DUST_RGB = "255,200,110";
 
 type Dust = { x: number; y: number; z: number; vy: number; size: number; opacity: number; twinkle: number };
 type Bokeh = { x: number; y: number; r: number; vx: number; vy: number; opacity: number };
 type Sparkle = { x: number; y: number; size: number; born: number; life: number; rotation: number };
 type Shooter = { x: number; y: number; vx: number; vy: number; born: number; life: number; length: number };
+type Filler = { angle: number; dist: number; size: number; alpha: number; targetAlpha: number };
+type Node = { x: number; y: number; size: number; alpha: number };
 
 function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
@@ -71,6 +75,8 @@ export function CosmicBackground() {
     let shooters: Shooter[] = [];
     const mouse = { x: -9999, y: -9999, active: false };
     const smoothMouse = { x: -9999, y: -9999 };
+    let fillers: Filler[] = [];
+    let ringAlpha = 0;
     let frame: number | null = null;
     let lastTime = 0;
     let nextShooterAt = 0;
@@ -88,8 +94,8 @@ export function CosmicBackground() {
           y: Math.random() * height,
           z,
           vy: rand(4, 14) * (0.3 + z),
-          size: rand(0.6, 1.6) * (0.5 + z),
-          opacity: rand(0.15, 0.55) * (0.4 + z * 0.8),
+          size: rand(0.4, 2),
+          opacity: rand(0.25, 0.85),
           twinkle: Math.random() * Math.PI * 2,
         };
       });
@@ -150,16 +156,12 @@ export function CosmicBackground() {
       ctx!.restore();
     }
 
-    function dustColor(z: number) {
-      return z > 0.66 ? GOLD_NEAR : z > 0.33 ? GOLD_MID : GOLD_FAR;
-    }
-
     function drawStatic() {
       ctx!.clearRect(0, 0, width, height);
       drawBokeh();
+      ctx!.fillStyle = `rgb(${DUST_RGB})`;
       for (const d of dust) {
         ctx!.globalAlpha = d.opacity;
-        ctx!.fillStyle = dustColor(d.z);
         ctx!.beginPath();
         ctx!.arc(d.x, d.y, d.size, 0, Math.PI * 2);
         ctx!.fill();
@@ -195,32 +197,78 @@ export function CosmicBackground() {
         const twinkle = 0.75 + 0.25 * Math.sin(now / 900 + d.twinkle);
         const px = d.x + parallaxX * 26 * d.z;
         const py = d.y + parallaxY * 18 * d.z;
-        ctx!.globalAlpha = d.opacity * twinkle;
-        ctx!.fillStyle = dustColor(d.z);
+        const alpha = d.opacity * twinkle;
+        const radius = d.size * (0.7 + d.z * 0.8);
+        if (d.z > 0.66) {
+          const haloR = radius * 4.5;
+          const halo = ctx!.createRadialGradient(px, py, 0, px, py, haloR);
+          halo.addColorStop(0, `rgba(${DUST_RGB},${alpha * 0.35})`);
+          halo.addColorStop(1, `rgba(${DUST_RGB},0)`);
+          ctx!.globalAlpha = 1;
+          ctx!.fillStyle = halo;
+          ctx!.beginPath();
+          ctx!.arc(px, py, haloR, 0, Math.PI * 2);
+          ctx!.fill();
+        }
+        ctx!.globalAlpha = alpha;
+        ctx!.fillStyle = `rgb(${DUST_RGB})`;
         ctx!.beginPath();
-        ctx!.arc(px, py, d.size * (0.7 + d.z * 0.8), 0, Math.PI * 2);
+        ctx!.arc(px, py, radius, 0, Math.PI * 2);
         ctx!.fill();
       }
 
-      if (fineHoverQuery.matches && mouse.active) {
-        smoothMouse.x += (mouse.x - smoothMouse.x) * CURSOR_LERP;
-        smoothMouse.y += (mouse.y - smoothMouse.y) * CURSOR_LERP;
-        for (let i = 0; i < dust.length; i++) {
-          const a = dust[i];
-          const distA = Math.hypot(a.x - smoothMouse.x, a.y - smoothMouse.y);
-          if (distA > CONSTELLATION_RADIUS) continue;
-          const nearAlpha = 1 - distA / CONSTELLATION_RADIUS;
-          ctx!.globalAlpha = nearAlpha * 0.85;
+      if (fineHoverQuery.matches) {
+        if (mouse.active) {
+          smoothMouse.x += (mouse.x - smoothMouse.x) * CURSOR_LERP;
+          smoothMouse.y += (mouse.y - smoothMouse.y) * CURSOR_LERP;
+        }
+        ringAlpha += ((mouse.active ? 1 : 0) - ringAlpha) * 0.12;
+
+        const nodes: Node[] = [];
+        for (const d of dust) {
+          const dist = Math.hypot(d.x - smoothMouse.x, d.y - smoothMouse.y);
+          if (dist > CONSTELLATION_RADIUS) continue;
+          nodes.push({ x: d.x, y: d.y, size: d.size, alpha: 1 - dist / CONSTELLATION_RADIUS });
+        }
+
+        const needed = mouse.active ? Math.max(0, MIN_CONSTELLATION_NODES - nodes.length) : 0;
+        while (fillers.length < needed) {
+          fillers.push({
+            angle: rand(0, Math.PI * 2),
+            dist: rand(18, CONSTELLATION_RADIUS * 0.82),
+            size: rand(0.8, 1.6),
+            alpha: 0,
+            targetAlpha: rand(0.5, 0.9),
+          });
+        }
+        for (let i = 0; i < fillers.length; i++) {
+          const f = fillers[i];
+          const target = i < needed ? f.targetAlpha : 0;
+          f.alpha += (target - f.alpha) * 0.08;
+          f.angle += dt * 0.25;
+        }
+        fillers = fillers.filter((f, i) => i < needed || f.alpha > 0.01);
+        for (const f of fillers) {
+          nodes.push({
+            x: smoothMouse.x + Math.cos(f.angle) * f.dist,
+            y: smoothMouse.y + Math.sin(f.angle) * f.dist,
+            size: f.size,
+            alpha: f.alpha,
+          });
+        }
+
+        for (let i = 0; i < nodes.length; i++) {
+          const a = nodes[i];
+          ctx!.globalAlpha = a.alpha * 0.9;
           ctx!.fillStyle = GOLD_NEAR;
           ctx!.beginPath();
-          ctx!.arc(a.x, a.y, a.size * 1.8 + 1, 0, Math.PI * 2);
+          ctx!.arc(a.x, a.y, a.size + 1.2, 0, Math.PI * 2);
           ctx!.fill();
-          for (let j = i + 1; j < dust.length; j++) {
-            const b = dust[j];
+          for (let j = i + 1; j < nodes.length; j++) {
+            const b = nodes[j];
             const dist = Math.hypot(a.x - b.x, a.y - b.y);
             if (dist > LINK_DISTANCE) continue;
-            if (Math.hypot(b.x - smoothMouse.x, b.y - smoothMouse.y) > CONSTELLATION_RADIUS) continue;
-            ctx!.globalAlpha = Math.min(nearAlpha, 1 - dist / LINK_DISTANCE) * 0.5;
+            ctx!.globalAlpha = (1 - dist / LINK_DISTANCE) * 0.6 * Math.min(a.alpha, b.alpha);
             ctx!.strokeStyle = GOLD_MID;
             ctx!.lineWidth = 1;
             ctx!.beginPath();
@@ -228,6 +276,15 @@ export function CosmicBackground() {
             ctx!.lineTo(b.x, b.y);
             ctx!.stroke();
           }
+        }
+
+        if (ringAlpha > 0.01) {
+          ctx!.globalAlpha = ringAlpha * 0.5;
+          ctx!.strokeStyle = GOLD_MID;
+          ctx!.lineWidth = 1;
+          ctx!.beginPath();
+          ctx!.arc(smoothMouse.x, smoothMouse.y, RING_RADIUS, 0, Math.PI * 2);
+          ctx!.stroke();
         }
       }
 
