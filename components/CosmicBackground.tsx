@@ -11,18 +11,18 @@ const CONSTELLATION_RADIUS = 160;
 const LINK_DISTANCE = 85;
 const CURSOR_LERP = 0.12;
 const MIN_CONSTELLATION_NODES = 8;
-const RING_RADIUS = 20;
+const RING_RADIUS = 12;
 
-const GOLD_NEAR = "#FBD9A5";
 const GOLD_MID = "#F5B041";
 const DUST_RGB = "255,200,110";
+const LINK_RGB = "245,176,65";
 
-type Dust = { x: number; y: number; z: number; vy: number; size: number; opacity: number; twinkle: number };
+type Dust = { x: number; y: number; z: number; vy: number; r: number; a: number };
 type Bokeh = { x: number; y: number; r: number; vx: number; vy: number; opacity: number };
 type Sparkle = { x: number; y: number; size: number; born: number; life: number; rotation: number };
 type Shooter = { x: number; y: number; vx: number; vy: number; born: number; life: number; length: number };
-type Filler = { angle: number; dist: number; size: number; alpha: number; targetAlpha: number };
-type Node = { x: number; y: number; size: number; alpha: number };
+type Filler = { angle: number; dist: number; speed: number; life: number; dying: boolean };
+type LinkNode = { x: number; y: number; life: number };
 
 function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
@@ -76,7 +76,6 @@ export function CosmicBackground() {
     const mouse = { x: -9999, y: -9999, active: false };
     const smoothMouse = { x: -9999, y: -9999 };
     let fillers: Filler[] = [];
-    let ringAlpha = 0;
     let frame: number | null = null;
     let lastTime = 0;
     let nextShooterAt = 0;
@@ -93,10 +92,9 @@ export function CosmicBackground() {
           x: Math.random() * width,
           y: Math.random() * height,
           z,
-          vy: rand(4, 14) * (0.3 + z),
-          size: rand(0.4, 2),
-          opacity: rand(0.25, 0.85),
-          twinkle: Math.random() * Math.PI * 2,
+          vy: -(0.05 + z * 0.35),
+          r: 0.4 + z * 1.6,
+          a: 0.25 + z * 0.6,
         };
       });
       bokeh = Array.from({ length: BOKEH_COUNT }, () => ({
@@ -159,11 +157,11 @@ export function CosmicBackground() {
     function drawStatic() {
       ctx!.clearRect(0, 0, width, height);
       drawBokeh();
-      ctx!.fillStyle = `rgb(${DUST_RGB})`;
       for (const d of dust) {
-        ctx!.globalAlpha = d.opacity;
+        ctx!.globalAlpha = 1;
+        ctx!.fillStyle = `rgba(${DUST_RGB},${d.a})`;
         ctx!.beginPath();
-        ctx!.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+        ctx!.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         ctx!.fill();
       }
       ctx!.globalAlpha = 1;
@@ -186,90 +184,88 @@ export function CosmicBackground() {
         if (b.x > width + b.r) b.x = -b.r;
       }
 
-      const parallaxX = mouse.active ? (mouse.x - width / 2) / width : 0;
-      const parallaxY = mouse.active ? (mouse.y - height / 2) / height : 0;
+      const active = fineHoverQuery.matches && mouse.active;
+      if (active) {
+        smoothMouse.x += (mouse.x - smoothMouse.x) * CURSOR_LERP;
+        smoothMouse.y += (mouse.y - smoothMouse.y) * CURSOR_LERP;
+      }
+
+      const near: LinkNode[] = [];
       for (const d of dust) {
-        d.y -= d.vy * dt;
+        d.y += d.vy * dt * 60;
         if (d.y < -10) {
           d.y = height + 10;
           d.x = Math.random() * width;
         }
-        const twinkle = 0.75 + 0.25 * Math.sin(now / 900 + d.twinkle);
-        const px = d.x + parallaxX * 26 * d.z;
-        const py = d.y + parallaxY * 18 * d.z;
-        const alpha = d.opacity * twinkle;
-        const radius = d.size * (0.7 + d.z * 0.8);
+        let r = d.r;
+        let a = d.a;
+        const dist = Math.hypot(d.x - smoothMouse.x, d.y - smoothMouse.y);
+        const isNear = active && dist < CONSTELLATION_RADIUS;
+        if (isNear) {
+          const k = 1 - dist / CONSTELLATION_RADIUS;
+          r += 1.2 * k;
+          a = Math.min(1, a + k * 0.6);
+          near.push({ x: d.x, y: d.y, life: 1 });
+        }
         if (d.z > 0.66) {
-          const haloR = radius * 4.5;
-          const halo = ctx!.createRadialGradient(px, py, 0, px, py, haloR);
-          halo.addColorStop(0, `rgba(${DUST_RGB},${alpha * 0.35})`);
+          const haloR = r * 4;
+          const halo = ctx!.createRadialGradient(d.x, d.y, 0, d.x, d.y, haloR);
+          halo.addColorStop(0, `rgba(${DUST_RGB},${a * 0.25})`);
           halo.addColorStop(1, `rgba(${DUST_RGB},0)`);
           ctx!.globalAlpha = 1;
           ctx!.fillStyle = halo;
           ctx!.beginPath();
-          ctx!.arc(px, py, haloR, 0, Math.PI * 2);
+          ctx!.arc(d.x, d.y, haloR, 0, Math.PI * 2);
           ctx!.fill();
         }
-        ctx!.globalAlpha = alpha;
-        ctx!.fillStyle = `rgb(${DUST_RGB})`;
+        ctx!.globalAlpha = 1;
+        ctx!.fillStyle = `rgba(${DUST_RGB},${a})`;
         ctx!.beginPath();
-        ctx!.arc(px, py, radius, 0, Math.PI * 2);
+        ctx!.arc(d.x, d.y, r, 0, Math.PI * 2);
         ctx!.fill();
       }
 
       if (fineHoverQuery.matches) {
-        if (mouse.active) {
-          smoothMouse.x += (mouse.x - smoothMouse.x) * CURSOR_LERP;
-          smoothMouse.y += (mouse.y - smoothMouse.y) * CURSOR_LERP;
+        const need = active ? Math.max(0, MIN_CONSTELLATION_NODES - near.length) : 0;
+        const alive = fillers.filter((f) => !f.dying).length;
+        for (let i = 0; i < need - alive; i++) {
+          fillers.push({ angle: rand(0, Math.PI * 2), dist: rand(40, 140), speed: (Math.random() < 0.5 ? -1 : 1) * 0.012, life: 0, dying: false });
         }
-        ringAlpha += ((mouse.active ? 1 : 0) - ringAlpha) * 0.12;
-
-        const nodes: Node[] = [];
-        for (const d of dust) {
-          const dist = Math.hypot(d.x - smoothMouse.x, d.y - smoothMouse.y);
-          if (dist > CONSTELLATION_RADIUS) continue;
-          nodes.push({ x: d.x, y: d.y, size: d.size, alpha: 1 - dist / CONSTELLATION_RADIUS });
+        if (alive > need) {
+          let toRetire = alive - need;
+          for (const f of fillers) {
+            if (toRetire <= 0) break;
+            if (!f.dying) {
+              f.dying = true;
+              toRetire--;
+            }
+          }
         }
-
-        const needed = mouse.active ? Math.max(0, MIN_CONSTELLATION_NODES - nodes.length) : 0;
-        while (fillers.length < needed) {
-          fillers.push({
-            angle: rand(0, Math.PI * 2),
-            dist: rand(18, CONSTELLATION_RADIUS * 0.82),
-            size: rand(0.8, 1.6),
-            alpha: 0,
-            targetAlpha: rand(0.5, 0.9),
-          });
-        }
-        for (let i = 0; i < fillers.length; i++) {
-          const f = fillers[i];
-          const target = i < needed ? f.targetAlpha : 0;
-          f.alpha += (target - f.alpha) * 0.08;
-          f.angle += dt * 0.25;
-        }
-        fillers = fillers.filter((f, i) => i < needed || f.alpha > 0.01);
         for (const f of fillers) {
-          nodes.push({
-            x: smoothMouse.x + Math.cos(f.angle) * f.dist,
-            y: smoothMouse.y + Math.sin(f.angle) * f.dist,
-            size: f.size,
-            alpha: f.alpha,
-          });
+          f.angle += f.speed * dt * 60;
+          f.life += (f.dying ? -0.03 : 0.04) * dt * 60;
+          f.life = Math.max(0, Math.min(1, f.life));
+        }
+        fillers = fillers.filter((f) => !f.dying || f.life > 0);
+        for (const f of fillers) {
+          const x = smoothMouse.x + Math.cos(f.angle) * f.dist;
+          const y = smoothMouse.y + Math.sin(f.angle) * f.dist;
+          ctx!.globalAlpha = 1;
+          ctx!.fillStyle = `rgba(${DUST_RGB},${f.life})`;
+          ctx!.beginPath();
+          ctx!.arc(x, y, 1.4, 0, Math.PI * 2);
+          ctx!.fill();
+          near.push({ x, y, life: f.life });
         }
 
-        for (let i = 0; i < nodes.length; i++) {
-          const a = nodes[i];
-          ctx!.globalAlpha = a.alpha * 0.9;
-          ctx!.fillStyle = GOLD_NEAR;
-          ctx!.beginPath();
-          ctx!.arc(a.x, a.y, a.size + 1.2, 0, Math.PI * 2);
-          ctx!.fill();
-          for (let j = i + 1; j < nodes.length; j++) {
-            const b = nodes[j];
+        for (let i = 0; i < near.length; i++) {
+          const a = near[i];
+          for (let j = i + 1; j < near.length; j++) {
+            const b = near[j];
             const dist = Math.hypot(a.x - b.x, a.y - b.y);
             if (dist > LINK_DISTANCE) continue;
-            ctx!.globalAlpha = (1 - dist / LINK_DISTANCE) * 0.6 * Math.min(a.alpha, b.alpha);
-            ctx!.strokeStyle = GOLD_MID;
+            ctx!.globalAlpha = 1;
+            ctx!.strokeStyle = `rgba(${LINK_RGB},${(1 - dist / LINK_DISTANCE) * 0.6 * Math.min(a.life, b.life)})`;
             ctx!.lineWidth = 1;
             ctx!.beginPath();
             ctx!.moveTo(a.x, a.y);
@@ -278,13 +274,18 @@ export function CosmicBackground() {
           }
         }
 
-        if (ringAlpha > 0.01) {
-          ctx!.globalAlpha = ringAlpha * 0.5;
-          ctx!.strokeStyle = GOLD_MID;
+        if (active) {
+          ctx!.globalAlpha = 1;
+          ctx!.strokeStyle = `rgba(${LINK_RGB},0.7)`;
           ctx!.lineWidth = 1;
           ctx!.beginPath();
           ctx!.arc(smoothMouse.x, smoothMouse.y, RING_RADIUS, 0, Math.PI * 2);
           ctx!.stroke();
+
+          ctx!.fillStyle = GOLD_MID;
+          ctx!.beginPath();
+          ctx!.arc(mouse.x, mouse.y, 2.5, 0, Math.PI * 2);
+          ctx!.fill();
         }
       }
 
