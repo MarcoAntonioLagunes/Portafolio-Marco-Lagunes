@@ -7,11 +7,15 @@ const MOBILE_DUST = 60;
 const BOKEH_COUNT = 14;
 const MAX_SPARKLES = 7;
 const MOBILE_BREAKPOINT = 640;
-const CONSTELLATION_RADIUS = 160;
-const LINK_DISTANCE = 85;
+const CONSTELLATION_RADIUS = 260;
+const LINK_DISTANCE = 140;
 const CURSOR_LERP = 0.12;
-const MIN_CONSTELLATION_NODES = 8;
-const RING_RADIUS = 12;
+const MIN_CONSTELLATION_NODES = 16;
+const RING_RADIUS = 18;
+const MAX_LINE_NODES = 60;
+const UI_SCALE_MIN = 0.8;
+const UI_SCALE_MAX = 1.3;
+const UI_SCALE_BASE = 1440;
 
 const GOLD_MID = "#F5B041";
 const DUST_RGB = "255,200,110";
@@ -191,6 +195,21 @@ export function CosmicBackground() {
         smoothMouse.y += (mouse.y - smoothMouse.y) * CURSOR_LERP;
       }
 
+      const uiScale = Math.min(UI_SCALE_MAX, Math.max(UI_SCALE_MIN, window.innerWidth / UI_SCALE_BASE));
+      const radius = CONSTELLATION_RADIUS * uiScale;
+      const linkDist = LINK_DISTANCE * uiScale;
+
+      if (active) {
+        ctx!.globalAlpha = 1;
+        const ambient = ctx!.createRadialGradient(smoothMouse.x, smoothMouse.y, 0, smoothMouse.x, smoothMouse.y, 220);
+        ambient.addColorStop(0, `rgba(${LINK_RGB},0.08)`);
+        ambient.addColorStop(1, `rgba(${LINK_RGB},0)`);
+        ctx!.fillStyle = ambient;
+        ctx!.beginPath();
+        ctx!.arc(smoothMouse.x, smoothMouse.y, 220, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+
       const near: LinkNode[] = [];
       for (const d of dust) {
         if (!reducedNow) {
@@ -203,11 +222,11 @@ export function CosmicBackground() {
         let r = d.r;
         let a = d.a;
         const dist = Math.hypot(d.x - smoothMouse.x, d.y - smoothMouse.y);
-        const isNear = active && dist < CONSTELLATION_RADIUS;
+        const isNear = active && dist < radius;
         if (isNear) {
-          const k = 1 - dist / CONSTELLATION_RADIUS;
-          r += 1.2 * k;
-          a = Math.min(1, a + k * 0.6);
+          const k = 1 - dist / radius;
+          r += 2.5 * k;
+          a = Math.max(0.7, Math.min(1, a + k * 0.6));
           near.push({ x: d.x, y: d.y, life: 1 });
         }
         if (d.z > 0.66) {
@@ -215,6 +234,17 @@ export function CosmicBackground() {
           const halo = ctx!.createRadialGradient(d.x, d.y, 0, d.x, d.y, haloR);
           halo.addColorStop(0, `rgba(${DUST_RGB},${a * 0.25})`);
           halo.addColorStop(1, `rgba(${DUST_RGB},0)`);
+          ctx!.globalAlpha = 1;
+          ctx!.fillStyle = halo;
+          ctx!.beginPath();
+          ctx!.arc(d.x, d.y, haloR, 0, Math.PI * 2);
+          ctx!.fill();
+        }
+        if (isNear) {
+          const haloR = r * 5;
+          const halo = ctx!.createRadialGradient(d.x, d.y, 0, d.x, d.y, haloR);
+          halo.addColorStop(0, `rgba(${LINK_RGB},0.35)`);
+          halo.addColorStop(1, `rgba(${LINK_RGB},0)`);
           ctx!.globalAlpha = 1;
           ctx!.fillStyle = halo;
           ctx!.beginPath();
@@ -232,7 +262,13 @@ export function CosmicBackground() {
       const need = active ? Math.max(0, MIN_CONSTELLATION_NODES - near.length) : 0;
       const alive = fillers.filter((f) => !f.dying).length;
       for (let i = 0; i < need - alive; i++) {
-        fillers.push({ angle: rand(0, Math.PI * 2), dist: rand(40, 140), speed: (Math.random() < 0.5 ? -1 : 1) * 0.012, life: 0, dying: false });
+        fillers.push({
+          angle: rand(0, Math.PI * 2),
+          dist: rand(50, 230) * uiScale,
+          speed: (Math.random() < 0.5 ? -1 : 1) * 0.008,
+          life: 0,
+          dying: false,
+        });
       }
       if (alive > need) {
         let toRetire = alive - need;
@@ -261,29 +297,40 @@ export function CosmicBackground() {
         near.push({ x, y, life: f.life });
       }
 
-      for (let i = 0; i < near.length; i++) {
-        const a = near[i];
-        for (let j = i + 1; j < near.length; j++) {
-          const b = near[j];
+      const lineNodes =
+        near.length > MAX_LINE_NODES
+          ? [...near].sort((p, q) => Math.hypot(p.x - smoothMouse.x, p.y - smoothMouse.y) - Math.hypot(q.x - smoothMouse.x, q.y - smoothMouse.y)).slice(0, MAX_LINE_NODES)
+          : near;
+
+      ctx!.shadowBlur = 6;
+      ctx!.shadowColor = `rgba(${LINK_RGB},0.6)`;
+      for (let i = 0; i < lineNodes.length; i++) {
+        const a = lineNodes[i];
+        for (let j = i + 1; j < lineNodes.length; j++) {
+          const b = lineNodes[j];
           const dist = Math.hypot(a.x - b.x, a.y - b.y);
-          if (dist > LINK_DISTANCE) continue;
+          if (dist > linkDist) continue;
           ctx!.globalAlpha = 1;
-          ctx!.strokeStyle = `rgba(${LINK_RGB},${(1 - dist / LINK_DISTANCE) * 0.6 * Math.min(a.life, b.life)})`;
-          ctx!.lineWidth = 1;
+          ctx!.strokeStyle = `rgba(${LINK_RGB},${(1 - dist / linkDist) * 0.85 * Math.min(a.life, b.life)})`;
+          ctx!.lineWidth = 1.4;
           ctx!.beginPath();
           ctx!.moveTo(a.x, a.y);
           ctx!.lineTo(b.x, b.y);
           ctx!.stroke();
         }
       }
+      ctx!.shadowBlur = 0;
 
       if (active) {
         ctx!.globalAlpha = 1;
+        ctx!.shadowBlur = 6;
+        ctx!.shadowColor = `rgba(${LINK_RGB},0.6)`;
         ctx!.strokeStyle = `rgba(${LINK_RGB},0.7)`;
-        ctx!.lineWidth = 1;
+        ctx!.lineWidth = 1.5;
         ctx!.beginPath();
         ctx!.arc(smoothMouse.x, smoothMouse.y, RING_RADIUS, 0, Math.PI * 2);
         ctx!.stroke();
+        ctx!.shadowBlur = 0;
 
         ctx!.fillStyle = GOLD_MID;
         ctx!.beginPath();
