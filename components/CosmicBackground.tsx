@@ -50,10 +50,12 @@ function drawFourPointStar(ctx: CanvasRenderingContext2D, x: number, y: number, 
 
 /**
  * Fondo "Cósmico" global, fijo detrás de todo el contenido: polvo de oro en profundidad, bokeh,
- * destellos, estrellas fugaces y constelaciones cerca del cursor (solo con mouse fino). El haz
- * diagonal y los resplandores de esquina son capas CSS (más baratas); el resto se dibuja en canvas.
- * Se pausa con la pestaña oculta, usa menos partículas en mobile y respeta prefers-reduced-motion
- * (un solo frame estático, sin interacción de cursor).
+ * destellos, estrellas fugaces y una constelación que sigue al cursor. La activación del cursor usa
+ * Pointer Events (pointerType === "mouse" | "pen"), nunca matchMedia hover/pointer: varios touchpads
+ * y laptops táctiles en Windows/Chrome reportan "pointer: coarse" aunque haya mouse real conectado.
+ * Con prefers-reduced-motion se apaga la deriva ambiental (polvo, bokeh, destellos) pero la
+ * constelación del cursor sigue funcionando. Con ?debug=1 en la URL se muestra un panel con el
+ * estado interno (último pointerType, si está activo, nodos cercanos, etc).
  */
 export function CosmicBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -65,7 +67,7 @@ export function CosmicBackground() {
 
     const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const desktopQuery = window.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`);
-    const fineHoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
 
     let width = 0;
     let height = 0;
@@ -75,14 +77,23 @@ export function CosmicBackground() {
     let shooters: Shooter[] = [];
     const mouse = { x: -9999, y: -9999, active: false };
     const smoothMouse = { x: -9999, y: -9999 };
+    let lastPointerType = "none";
     let fillers: Filler[] = [];
     let frame: number | null = null;
     let lastTime = 0;
     let nextShooterAt = 0;
     let visible = true;
     let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
+    let debugEl: HTMLPreElement | null = null;
 
-    const reduced = () => reducedMotionQuery.matches;
+    if (debugMode) {
+      debugEl = document.createElement("pre");
+      debugEl.style.cssText =
+        "position:fixed;top:8px;left:8px;z-index:9999;margin:0;padding:8px 10px;" +
+        "background:rgba(0,0,0,0.78);color:#F5B041;font:11px/1.5 monospace;" +
+        "border-radius:6px;pointer-events:none;white-space:pre;";
+      document.body.appendChild(debugEl);
+    }
 
     function initParticles() {
       const count = desktopQuery.matches ? DESKTOP_DUST : MOBILE_DUST;
@@ -154,37 +165,27 @@ export function CosmicBackground() {
       ctx!.restore();
     }
 
-    function drawStatic() {
-      ctx!.clearRect(0, 0, width, height);
-      drawBokeh();
-      for (const d of dust) {
-        ctx!.globalAlpha = 1;
-        ctx!.fillStyle = `rgba(${DUST_RGB},${d.a})`;
-        ctx!.beginPath();
-        ctx!.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx!.fill();
-      }
-      ctx!.globalAlpha = 1;
-    }
-
     function tick(now: number) {
       const dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
+      const reducedNow = reducedMotionQuery.matches;
       ctx!.clearRect(0, 0, width, height);
 
       drawBokeh();
-      for (const b of bokeh) {
-        b.x += b.vx * dt;
-        b.y += b.vy * dt;
-        if (b.y < -b.r) {
-          b.y = height + b.r;
-          b.x = Math.random() * width;
+      if (!reducedNow) {
+        for (const b of bokeh) {
+          b.x += b.vx * dt;
+          b.y += b.vy * dt;
+          if (b.y < -b.r) {
+            b.y = height + b.r;
+            b.x = Math.random() * width;
+          }
+          if (b.x < -b.r) b.x = width + b.r;
+          if (b.x > width + b.r) b.x = -b.r;
         }
-        if (b.x < -b.r) b.x = width + b.r;
-        if (b.x > width + b.r) b.x = -b.r;
       }
 
-      const active = fineHoverQuery.matches && mouse.active;
+      const active = mouse.active;
       if (active) {
         smoothMouse.x += (mouse.x - smoothMouse.x) * CURSOR_LERP;
         smoothMouse.y += (mouse.y - smoothMouse.y) * CURSOR_LERP;
@@ -192,10 +193,12 @@ export function CosmicBackground() {
 
       const near: LinkNode[] = [];
       for (const d of dust) {
-        d.y += d.vy * dt * 60;
-        if (d.y < -10) {
-          d.y = height + 10;
-          d.x = Math.random() * width;
+        if (!reducedNow) {
+          d.y += d.vy * dt * 60;
+          if (d.y < -10) {
+            d.y = height + 10;
+            d.x = Math.random() * width;
+          }
         }
         let r = d.r;
         let a = d.a;
@@ -224,105 +227,115 @@ export function CosmicBackground() {
         ctx!.arc(d.x, d.y, r, 0, Math.PI * 2);
         ctx!.fill();
       }
+      const nearRealCount = near.length;
 
-      if (fineHoverQuery.matches) {
-        const need = active ? Math.max(0, MIN_CONSTELLATION_NODES - near.length) : 0;
-        const alive = fillers.filter((f) => !f.dying).length;
-        for (let i = 0; i < need - alive; i++) {
-          fillers.push({ angle: rand(0, Math.PI * 2), dist: rand(40, 140), speed: (Math.random() < 0.5 ? -1 : 1) * 0.012, life: 0, dying: false });
-        }
-        if (alive > need) {
-          let toRetire = alive - need;
-          for (const f of fillers) {
-            if (toRetire <= 0) break;
-            if (!f.dying) {
-              f.dying = true;
-              toRetire--;
-            }
+      const need = active ? Math.max(0, MIN_CONSTELLATION_NODES - near.length) : 0;
+      const alive = fillers.filter((f) => !f.dying).length;
+      for (let i = 0; i < need - alive; i++) {
+        fillers.push({ angle: rand(0, Math.PI * 2), dist: rand(40, 140), speed: (Math.random() < 0.5 ? -1 : 1) * 0.012, life: 0, dying: false });
+      }
+      if (alive > need) {
+        let toRetire = alive - need;
+        for (const f of fillers) {
+          if (toRetire <= 0) break;
+          if (!f.dying) {
+            f.dying = true;
+            toRetire--;
           }
         }
-        for (const f of fillers) {
-          f.angle += f.speed * dt * 60;
-          f.life += (f.dying ? -0.03 : 0.04) * dt * 60;
-          f.life = Math.max(0, Math.min(1, f.life));
-        }
-        fillers = fillers.filter((f) => !f.dying || f.life > 0);
-        for (const f of fillers) {
-          const x = smoothMouse.x + Math.cos(f.angle) * f.dist;
-          const y = smoothMouse.y + Math.sin(f.angle) * f.dist;
-          ctx!.globalAlpha = 1;
-          ctx!.fillStyle = `rgba(${DUST_RGB},${f.life})`;
-          ctx!.beginPath();
-          ctx!.arc(x, y, 1.4, 0, Math.PI * 2);
-          ctx!.fill();
-          near.push({ x, y, life: f.life });
-        }
+      }
+      for (const f of fillers) {
+        f.angle += f.speed * dt * 60;
+        f.life += (f.dying ? -0.03 : 0.04) * dt * 60;
+        f.life = Math.max(0, Math.min(1, f.life));
+      }
+      fillers = fillers.filter((f) => !f.dying || f.life > 0);
+      for (const f of fillers) {
+        const x = smoothMouse.x + Math.cos(f.angle) * f.dist;
+        const y = smoothMouse.y + Math.sin(f.angle) * f.dist;
+        ctx!.globalAlpha = 1;
+        ctx!.fillStyle = `rgba(${DUST_RGB},${f.life})`;
+        ctx!.beginPath();
+        ctx!.arc(x, y, 1.4, 0, Math.PI * 2);
+        ctx!.fill();
+        near.push({ x, y, life: f.life });
+      }
 
-        for (let i = 0; i < near.length; i++) {
-          const a = near[i];
-          for (let j = i + 1; j < near.length; j++) {
-            const b = near[j];
-            const dist = Math.hypot(a.x - b.x, a.y - b.y);
-            if (dist > LINK_DISTANCE) continue;
-            ctx!.globalAlpha = 1;
-            ctx!.strokeStyle = `rgba(${LINK_RGB},${(1 - dist / LINK_DISTANCE) * 0.6 * Math.min(a.life, b.life)})`;
-            ctx!.lineWidth = 1;
-            ctx!.beginPath();
-            ctx!.moveTo(a.x, a.y);
-            ctx!.lineTo(b.x, b.y);
-            ctx!.stroke();
-          }
-        }
-
-        if (active) {
+      for (let i = 0; i < near.length; i++) {
+        const a = near[i];
+        for (let j = i + 1; j < near.length; j++) {
+          const b = near[j];
+          const dist = Math.hypot(a.x - b.x, a.y - b.y);
+          if (dist > LINK_DISTANCE) continue;
           ctx!.globalAlpha = 1;
-          ctx!.strokeStyle = `rgba(${LINK_RGB},0.7)`;
+          ctx!.strokeStyle = `rgba(${LINK_RGB},${(1 - dist / LINK_DISTANCE) * 0.6 * Math.min(a.life, b.life)})`;
           ctx!.lineWidth = 1;
           ctx!.beginPath();
-          ctx!.arc(smoothMouse.x, smoothMouse.y, RING_RADIUS, 0, Math.PI * 2);
+          ctx!.moveTo(a.x, a.y);
+          ctx!.lineTo(b.x, b.y);
           ctx!.stroke();
-
-          ctx!.fillStyle = GOLD_MID;
-          ctx!.beginPath();
-          ctx!.arc(mouse.x, mouse.y, 2.5, 0, Math.PI * 2);
-          ctx!.fill();
         }
       }
 
-      if (Math.random() < 0.012) spawnSparkle();
-      sparkles = sparkles.filter((s) => now - s.born < s.life);
-      for (const s of sparkles) {
-        const t = (now - s.born) / s.life;
-        const alpha = t < 0.5 ? t * 2 : (1 - t) * 2;
-        drawFourPointStar(ctx!, s.x, s.y, s.size, alpha * 0.85, s.rotation);
+      if (active) {
+        ctx!.globalAlpha = 1;
+        ctx!.strokeStyle = `rgba(${LINK_RGB},0.7)`;
+        ctx!.lineWidth = 1;
+        ctx!.beginPath();
+        ctx!.arc(smoothMouse.x, smoothMouse.y, RING_RADIUS, 0, Math.PI * 2);
+        ctx!.stroke();
+
+        ctx!.fillStyle = GOLD_MID;
+        ctx!.beginPath();
+        ctx!.arc(mouse.x, mouse.y, 2.5, 0, Math.PI * 2);
+        ctx!.fill();
       }
 
-      if (now > nextShooterAt && shooters.length < 2) {
-        spawnShooter();
-        nextShooterAt = now + rand(4000, 9000);
-      }
-      shooters = shooters.filter((s) => now - s.born < s.life);
-      for (const s of shooters) {
-        const t = (now - s.born) / s.life;
-        const elapsedS = (t * s.life) / 1000;
-        const x = s.x + s.vx * elapsedS;
-        const y = s.y + s.vy * elapsedS;
-        const alpha = t < 0.15 ? t / 0.15 : 1 - (t - 0.15) / 0.85;
-        const angle = Math.atan2(s.vy, s.vx);
-        const tailX = x - Math.cos(angle) * s.length;
-        const tailY = y - Math.sin(angle) * s.length;
-        const grad = ctx!.createLinearGradient(tailX, tailY, x, y);
-        grad.addColorStop(0, "rgba(245,176,65,0)");
-        grad.addColorStop(1, `rgba(255,236,196,${alpha})`);
-        ctx!.globalAlpha = 1;
-        ctx!.strokeStyle = grad;
-        ctx!.lineWidth = 1.6;
-        ctx!.beginPath();
-        ctx!.moveTo(tailX, tailY);
-        ctx!.lineTo(x, y);
-        ctx!.stroke();
+      if (!reducedNow) {
+        if (Math.random() < 0.012) spawnSparkle();
+        sparkles = sparkles.filter((s) => now - s.born < s.life);
+        for (const s of sparkles) {
+          const t = (now - s.born) / s.life;
+          const alpha = t < 0.5 ? t * 2 : (1 - t) * 2;
+          drawFourPointStar(ctx!, s.x, s.y, s.size, alpha * 0.85, s.rotation);
+        }
+
+        if (now > nextShooterAt && shooters.length < 2) {
+          spawnShooter();
+          nextShooterAt = now + rand(4000, 9000);
+        }
+        shooters = shooters.filter((s) => now - s.born < s.life);
+        for (const s of shooters) {
+          const t = (now - s.born) / s.life;
+          const elapsedS = (t * s.life) / 1000;
+          const x = s.x + s.vx * elapsedS;
+          const y = s.y + s.vy * elapsedS;
+          const alpha = t < 0.15 ? t / 0.15 : 1 - (t - 0.15) / 0.85;
+          const angle = Math.atan2(s.vy, s.vx);
+          const tailX = x - Math.cos(angle) * s.length;
+          const tailY = y - Math.sin(angle) * s.length;
+          const grad = ctx!.createLinearGradient(tailX, tailY, x, y);
+          grad.addColorStop(0, "rgba(245,176,65,0)");
+          grad.addColorStop(1, `rgba(255,236,196,${alpha})`);
+          ctx!.globalAlpha = 1;
+          ctx!.strokeStyle = grad;
+          ctx!.lineWidth = 1.6;
+          ctx!.beginPath();
+          ctx!.moveTo(tailX, tailY);
+          ctx!.lineTo(x, y);
+          ctx!.stroke();
+        }
       }
       ctx!.globalAlpha = 1;
+
+      if (debugEl) {
+        debugEl.textContent =
+          `reducedMotion: ${reducedNow}\n` +
+          `lastPointerType: ${lastPointerType}\n` +
+          `active: ${active}\n` +
+          `nearDust: ${nearRealCount}\n` +
+          `fillers: ${fillers.length}`;
+      }
 
       frame = requestAnimationFrame(tick);
     }
@@ -335,10 +348,6 @@ export function CosmicBackground() {
     function start() {
       cancelAnim();
       if (!visible) return;
-      if (reduced()) {
-        drawStatic();
-        return;
-      }
       lastTime = performance.now();
       nextShooterAt = lastTime + rand(2000, 6000);
       frame = requestAnimationFrame(tick);
@@ -346,13 +355,12 @@ export function CosmicBackground() {
 
     function handleResize() {
       if (resizeTimeout) clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        resize();
-        if (reduced()) drawStatic();
-      }, 150);
+      resizeTimeout = setTimeout(resize, 150);
     }
 
-    function handleMouseMove(e: MouseEvent) {
+    function handlePointerMove(e: PointerEvent) {
+      lastPointerType = e.pointerType;
+      if (e.pointerType === "touch") return;
       if (!mouse.active) {
         smoothMouse.x = e.clientX;
         smoothMouse.y = e.clientY;
@@ -361,36 +369,37 @@ export function CosmicBackground() {
       mouse.y = e.clientY;
       mouse.active = true;
     }
-    function handleMouseLeave() {
+    function handlePointerLeave() {
       mouse.active = false;
+    }
+    function handlePointerOut(e: PointerEvent) {
+      if (e.relatedTarget === null) mouse.active = false;
     }
     function handleVisibility() {
       visible = document.visibilityState === "visible";
       if (visible) start();
       else cancelAnim();
     }
-    function handlePreferenceChange() {
-      start();
-    }
 
     resize();
     start();
 
     window.addEventListener("resize", handleResize);
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    window.addEventListener("mouseleave", handleMouseLeave);
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerout", handlePointerOut, { passive: true });
+    document.documentElement.addEventListener("pointerleave", handlePointerLeave);
     document.addEventListener("visibilitychange", handleVisibility);
-    reducedMotionQuery.addEventListener("change", handlePreferenceChange);
     desktopQuery.addEventListener("change", handleResize);
 
     return () => {
       cancelAnim();
       if (resizeTimeout) clearTimeout(resizeTimeout);
+      debugEl?.remove();
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerout", handlePointerOut);
+      document.documentElement.removeEventListener("pointerleave", handlePointerLeave);
       document.removeEventListener("visibilitychange", handleVisibility);
-      reducedMotionQuery.removeEventListener("change", handlePreferenceChange);
       desktopQuery.removeEventListener("change", handleResize);
     };
   }, []);
