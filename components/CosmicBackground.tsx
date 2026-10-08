@@ -7,8 +7,9 @@ const MOBILE_DUST = 60;
 const BOKEH_COUNT = 14;
 const MAX_SPARKLES = 7;
 const MOBILE_BREAKPOINT = 640;
-const CONSTELLATION_RADIUS = 130;
-const LINK_DISTANCE = 90;
+const CONSTELLATION_RADIUS = 140;
+const LINK_DISTANCE = 75;
+const CURSOR_LERP = 0.12;
 
 const GOLD_NEAR = "#FBD9A5";
 const GOLD_MID = "#F5B041";
@@ -69,6 +70,7 @@ export function CosmicBackground() {
     let sparkles: Sparkle[] = [];
     let shooters: Shooter[] = [];
     const mouse = { x: -9999, y: -9999, active: false };
+    const smoothMouse = { x: -9999, y: -9999 };
     let frame: number | null = null;
     let lastTime = 0;
     let nextShooterAt = 0;
@@ -201,9 +203,11 @@ export function CosmicBackground() {
       }
 
       if (fineHoverQuery.matches && mouse.active) {
+        smoothMouse.x += (mouse.x - smoothMouse.x) * CURSOR_LERP;
+        smoothMouse.y += (mouse.y - smoothMouse.y) * CURSOR_LERP;
         for (let i = 0; i < dust.length; i++) {
           const a = dust[i];
-          const distA = Math.hypot(a.x - mouse.x, a.y - mouse.y);
+          const distA = Math.hypot(a.x - smoothMouse.x, a.y - smoothMouse.y);
           if (distA > CONSTELLATION_RADIUS) continue;
           const nearAlpha = 1 - distA / CONSTELLATION_RADIUS;
           ctx!.globalAlpha = nearAlpha * 0.85;
@@ -215,7 +219,7 @@ export function CosmicBackground() {
             const b = dust[j];
             const dist = Math.hypot(a.x - b.x, a.y - b.y);
             if (dist > LINK_DISTANCE) continue;
-            if (Math.hypot(b.x - mouse.x, b.y - mouse.y) > CONSTELLATION_RADIUS) continue;
+            if (Math.hypot(b.x - smoothMouse.x, b.y - smoothMouse.y) > CONSTELLATION_RADIUS) continue;
             ctx!.globalAlpha = Math.min(nearAlpha, 1 - dist / LINK_DISTANCE) * 0.5;
             ctx!.strokeStyle = GOLD_MID;
             ctx!.lineWidth = 1;
@@ -291,6 +295,10 @@ export function CosmicBackground() {
     }
 
     function handleMouseMove(e: MouseEvent) {
+      if (!mouse.active) {
+        smoothMouse.x = e.clientX;
+        smoothMouse.y = e.clientY;
+      }
       mouse.x = e.clientX;
       mouse.y = e.clientY;
       mouse.active = true;
