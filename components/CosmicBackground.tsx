@@ -17,6 +17,17 @@ const UI_SCALE_MIN = 0.8;
 const UI_SCALE_MAX = 1.3;
 const UI_SCALE_BASE = 1440;
 
+const TOUCH_RADIUS = 150;
+const TOUCH_LINK_DISTANCE = 90;
+const TOUCH_MIN_NODES = 10;
+const TOUCH_MAX_LINE_NODES = 35;
+const TOUCH_GLOW_RADIUS = 170;
+const TOUCH_LERP = 0.2;
+const GHOST_CYCLE_SECONDS = 30;
+const GHOST_FADE_IN_SECONDS = 0.8;
+const FINGER_FADE_IN_SECONDS = 0.25;
+const FINGER_FADE_OUT_SECONDS = 0.6;
+
 const GOLD_MID = "#F5B041";
 const DUST_RGB = "255,200,110";
 const LINK_RGB = "245,176,65";
@@ -58,7 +69,13 @@ function drawFourPointStar(ctx: CanvasRenderingContext2D, x: number, y: number, 
  * Pointer Events (pointerType === "mouse" | "pen"), nunca matchMedia hover/pointer: varios touchpads
  * y laptops táctiles en Windows/Chrome reportan "pointer: coarse" aunque haya mouse real conectado.
  * Con prefers-reduced-motion se apaga la deriva ambiental (polvo, bokeh, destellos) pero la
- * constelación del cursor sigue funcionando. Con ?debug=1 en la URL se muestra un panel con el
+ * constelación del cursor sigue funcionando.
+ *
+ * En touch (pointerType "touch" | "pen", o dispositivos sin hover al cargar) no hay mouse: un
+ * "cursor fantasma" recorre el viewport con una trayectoria Lissajous lenta y la constelación se
+ * forma a su alrededor. Si el dedo toca la pantalla, el punto activo pasa a ser el dedo; al soltar,
+ * el efecto se desvanece y el fantasma retoma donde quedó. Los listeners táctiles son pasivos (sin
+ * preventDefault) para no afectar el scroll. Con mouse todo se comporta como siempre. Con ?debug=1 en la URL se muestra un panel con el
  * estado interno (último pointerType, si está activo, nodos cercanos, etc).
  */
 export function CosmicBackground() {
@@ -81,6 +98,9 @@ export function CosmicBackground() {
     let shooters: Shooter[] = [];
     const mouse = { x: -9999, y: -9999, active: false };
     const smoothMouse = { x: -9999, y: -9999 };
+    const touch = { x: 0, y: 0, down: false, releasing: false, strength: 0 };
+    let mode: "mouse" | "touch" = window.matchMedia("(hover: none) and (pointer: coarse)").matches ? "touch" : "mouse";
+    let ghostT = 0;
     let lastPointerType = "none";
     let fillers: Filler[] = [];
     let frame: number | null = null;
@@ -189,24 +209,56 @@ export function CosmicBackground() {
         }
       }
 
-      const active = mouse.active;
-      if (active) {
+      const touchMode = mode === "touch";
+      let active = mouse.active;
+      let strength = 1;
+      if (touchMode) {
+        let targetX = touch.x;
+        let targetY = touch.y;
+        if (touch.down) {
+          touch.strength = Math.min(1, touch.strength + dt / FINGER_FADE_IN_SECONDS);
+        } else if (touch.releasing) {
+          touch.strength = Math.max(0, touch.strength - dt / FINGER_FADE_OUT_SECONDS);
+          if (touch.strength === 0) touch.releasing = false;
+        } else if (!reducedNow) {
+          ghostT += dt;
+          const u = (ghostT / GHOST_CYCLE_SECONDS) * Math.PI * 2;
+          targetX = width * (0.5 + 0.4 * Math.sin(2 * u + Math.PI / 2));
+          targetY = height * (0.5 + 0.4 * Math.sin(3 * u));
+          if (touch.strength === 0) {
+            smoothMouse.x = targetX;
+            smoothMouse.y = targetY;
+          }
+          touch.strength = Math.min(1, touch.strength + dt / GHOST_FADE_IN_SECONDS);
+        } else {
+          touch.strength = Math.max(0, touch.strength - dt / FINGER_FADE_OUT_SECONDS);
+        }
+        strength = touch.strength;
+        active = strength > 0.001;
+        if (active) {
+          smoothMouse.x += (targetX - smoothMouse.x) * TOUCH_LERP;
+          smoothMouse.y += (targetY - smoothMouse.y) * TOUCH_LERP;
+        }
+      } else if (active) {
         smoothMouse.x += (mouse.x - smoothMouse.x) * CURSOR_LERP;
         smoothMouse.y += (mouse.y - smoothMouse.y) * CURSOR_LERP;
       }
 
       const uiScale = Math.min(UI_SCALE_MAX, Math.max(UI_SCALE_MIN, window.innerWidth / UI_SCALE_BASE));
-      const radius = CONSTELLATION_RADIUS * uiScale;
-      const linkDist = LINK_DISTANCE * uiScale;
+      const radius = touchMode ? TOUCH_RADIUS : CONSTELLATION_RADIUS * uiScale;
+      const linkDist = touchMode ? TOUCH_LINK_DISTANCE : LINK_DISTANCE * uiScale;
+      const minNodes = touchMode ? TOUCH_MIN_NODES : MIN_CONSTELLATION_NODES;
+      const maxLineNodes = touchMode ? TOUCH_MAX_LINE_NODES : MAX_LINE_NODES;
 
       if (active) {
+        const glowR = touchMode ? TOUCH_GLOW_RADIUS : 220;
         ctx!.globalAlpha = 1;
-        const ambient = ctx!.createRadialGradient(smoothMouse.x, smoothMouse.y, 0, smoothMouse.x, smoothMouse.y, 220);
-        ambient.addColorStop(0, `rgba(${LINK_RGB},0.08)`);
+        const ambient = ctx!.createRadialGradient(smoothMouse.x, smoothMouse.y, 0, smoothMouse.x, smoothMouse.y, glowR);
+        ambient.addColorStop(0, `rgba(${LINK_RGB},${0.08 * strength})`);
         ambient.addColorStop(1, `rgba(${LINK_RGB},0)`);
         ctx!.fillStyle = ambient;
         ctx!.beginPath();
-        ctx!.arc(smoothMouse.x, smoothMouse.y, 220, 0, Math.PI * 2);
+        ctx!.arc(smoothMouse.x, smoothMouse.y, glowR, 0, Math.PI * 2);
         ctx!.fill();
       }
 
@@ -225,9 +277,9 @@ export function CosmicBackground() {
         const isNear = active && dist < radius;
         if (isNear) {
           const k = 1 - dist / radius;
-          r += 2.5 * k;
-          a = Math.max(0.7, Math.min(1, a + k * 0.6));
-          near.push({ x: d.x, y: d.y, life: 1 });
+          r += 2.5 * k * strength;
+          a += (Math.max(0.7, Math.min(1, a + k * 0.6)) - a) * strength;
+          near.push({ x: d.x, y: d.y, life: strength });
         }
         if (d.z > 0.66) {
           const haloR = r * 4;
@@ -243,7 +295,7 @@ export function CosmicBackground() {
         if (isNear) {
           const haloR = r * 5;
           const halo = ctx!.createRadialGradient(d.x, d.y, 0, d.x, d.y, haloR);
-          halo.addColorStop(0, `rgba(${LINK_RGB},0.35)`);
+          halo.addColorStop(0, `rgba(${LINK_RGB},${0.35 * strength})`);
           halo.addColorStop(1, `rgba(${LINK_RGB},0)`);
           ctx!.globalAlpha = 1;
           ctx!.fillStyle = halo;
@@ -259,12 +311,12 @@ export function CosmicBackground() {
       }
       const nearRealCount = near.length;
 
-      const need = active ? Math.max(0, MIN_CONSTELLATION_NODES - near.length) : 0;
+      const need = active ? Math.max(0, minNodes - near.length) : 0;
       const alive = fillers.filter((f) => !f.dying).length;
       for (let i = 0; i < need - alive; i++) {
         fillers.push({
           angle: rand(0, Math.PI * 2),
-          dist: rand(50, 230) * uiScale,
+          dist: touchMode ? rand(30, 135) : rand(50, 230) * uiScale,
           speed: (Math.random() < 0.5 ? -1 : 1) * 0.008,
           life: 0,
           dying: false,
@@ -290,16 +342,16 @@ export function CosmicBackground() {
         const x = smoothMouse.x + Math.cos(f.angle) * f.dist;
         const y = smoothMouse.y + Math.sin(f.angle) * f.dist;
         ctx!.globalAlpha = 1;
-        ctx!.fillStyle = `rgba(${DUST_RGB},${f.life})`;
+        ctx!.fillStyle = `rgba(${DUST_RGB},${f.life * strength})`;
         ctx!.beginPath();
         ctx!.arc(x, y, 1.4, 0, Math.PI * 2);
         ctx!.fill();
-        near.push({ x, y, life: f.life });
+        near.push({ x, y, life: f.life * strength });
       }
 
       const lineNodes =
-        near.length > MAX_LINE_NODES
-          ? [...near].sort((p, q) => Math.hypot(p.x - smoothMouse.x, p.y - smoothMouse.y) - Math.hypot(q.x - smoothMouse.x, q.y - smoothMouse.y)).slice(0, MAX_LINE_NODES)
+        near.length > maxLineNodes
+          ? [...near].sort((p, q) => Math.hypot(p.x - smoothMouse.x, p.y - smoothMouse.y) - Math.hypot(q.x - smoothMouse.x, q.y - smoothMouse.y)).slice(0, maxLineNodes)
           : near;
 
       ctx!.shadowBlur = 6;
@@ -321,7 +373,7 @@ export function CosmicBackground() {
       }
       ctx!.shadowBlur = 0;
 
-      if (active) {
+      if (active && !touchMode) {
         ctx!.globalAlpha = 1;
         ctx!.shadowBlur = 6;
         ctx!.shadowColor = `rgba(${LINK_RGB},0.6)`;
@@ -378,6 +430,8 @@ export function CosmicBackground() {
       if (debugEl) {
         debugEl.textContent =
           `reducedMotion: ${reducedNow}\n` +
+          `mode: ${mode}\n` +
+          `strength: ${strength.toFixed(2)}\n` +
           `lastPointerType: ${lastPointerType}\n` +
           `active: ${active}\n` +
           `nearDust: ${nearRealCount}\n` +
@@ -405,9 +459,47 @@ export function CosmicBackground() {
       resizeTimeout = setTimeout(resize, 150);
     }
 
+    function setFinger(x: number, y: number) {
+      if (mode !== "touch") {
+        mode = "touch";
+        mouse.active = false;
+        touch.strength = 0;
+      }
+      if (!touch.down && touch.strength <= 0.001) {
+        smoothMouse.x = x;
+        smoothMouse.y = y;
+      }
+      touch.x = x;
+      touch.y = y;
+      touch.down = true;
+      touch.releasing = false;
+    }
+    function releaseFinger() {
+      if (!touch.down) return;
+      touch.down = false;
+      touch.releasing = true;
+    }
+    function handleTouch(e: TouchEvent) {
+      lastPointerType = "touch";
+      const t = e.touches[0];
+      if (t) setFinger(t.clientX, t.clientY);
+    }
+    function handleTouchEnd(e: TouchEvent) {
+      if (e.touches.length === 0) releaseFinger();
+    }
+
     function handlePointerMove(e: PointerEvent) {
       lastPointerType = e.pointerType;
-      if (e.pointerType === "touch") return;
+      if (e.pointerType === "touch" || e.pointerType === "pen") {
+        setFinger(e.clientX, e.clientY);
+        return;
+      }
+      if (mode !== "mouse") {
+        mode = "mouse";
+        touch.down = false;
+        touch.releasing = false;
+        touch.strength = 0;
+      }
       if (!mouse.active) {
         smoothMouse.x = e.clientX;
         smoothMouse.y = e.clientY;
@@ -420,7 +512,9 @@ export function CosmicBackground() {
       mouse.active = false;
     }
     function handlePointerOut(e: PointerEvent) {
-      if (e.relatedTarget === null) mouse.active = false;
+      if (e.relatedTarget !== null || e.pointerType === "touch") return;
+      mouse.active = false;
+      if (e.pointerType === "pen") releaseFinger();
     }
     function handleVisibility() {
       visible = document.visibilityState === "visible";
@@ -434,6 +528,10 @@ export function CosmicBackground() {
     window.addEventListener("resize", handleResize);
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerout", handlePointerOut, { passive: true });
+    window.addEventListener("touchstart", handleTouch, { passive: true });
+    window.addEventListener("touchmove", handleTouch, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", handleTouchEnd, { passive: true });
     document.documentElement.addEventListener("pointerleave", handlePointerLeave);
     document.addEventListener("visibilitychange", handleVisibility);
     desktopQuery.addEventListener("change", handleResize);
@@ -445,6 +543,10 @@ export function CosmicBackground() {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerout", handlePointerOut);
+      window.removeEventListener("touchstart", handleTouch);
+      window.removeEventListener("touchmove", handleTouch);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchEnd);
       document.documentElement.removeEventListener("pointerleave", handlePointerLeave);
       document.removeEventListener("visibilitychange", handleVisibility);
       desktopQuery.removeEventListener("change", handleResize);
